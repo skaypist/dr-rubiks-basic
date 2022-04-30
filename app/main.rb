@@ -1,3 +1,3 @@
-require 'app/require.rb'
-require 'app/require_tests.rb'
-require 'app/tick.rb'
+require 'app/bootstrap/require.rb'
+require 'app/bootstrap/require_tests.rb'
+require 'app/bootstrap/tick.rb'
