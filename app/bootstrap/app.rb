@@ -8,12 +8,25 @@ class App
 
   def cube
     # @cube ||= Cube.build_simple(cube_corner, cube_size)
-    Cube.build_simple(cube_corner, cube_size).transform(rotation_matrix)
+    Cube.
+      build_simple(cube_corner, cube_size).
+      rotate(
+        around: rotation_axis,
+        at: cube_center,
+        by: rotation_angle
+      )
   end
 
-  def rotation_matrix
-    rotation_axis = normalize(add(cube_center, Transforms.scale3(cube_corner, -1)))
-    Transforms.rotate(around: rotation_axis, angle: $gtk.args.state.tick_count % 360)
+  def rotation_angle
+    $gtk.args.state.tick_count % 360
+  end
+
+  def rotation_axis
+    normalize(add(cube_center, Transforms.scale3(cube_corner, -1)))
+  end
+
+  def rotation_point
+    cube_center
   end
 
   def cube_size
