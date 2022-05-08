@@ -3,12 +3,29 @@ class App
 
   def perform_tick args
     point_set_renderer.render(cube)
-    cube.points.each { |p| puts p }
     # args.gtk.request_quit if args.state.tick_count > 1
   end
 
   def cube
-    @cube ||= Cube.build_simple(vec3(400,400,0), 200)
+    # @cube ||= Cube.build_simple(cube_corner, cube_size)
+    Cube.build_simple(cube_corner, cube_size).transform(rotation_matrix)
+  end
+
+  def rotation_matrix
+    rotation_axis = normalize(add(cube_center, Transforms.scale3(cube_corner, -1)))
+    Transforms.rotate(around: rotation_axis, angle: $gtk.args.state.tick_count % 360)
+  end
+
+  def cube_size
+    200
+  end
+
+  def cube_corner
+    vec3(400,400,0)
+  end
+
+  def cube_center
+    cube_corner + vec3(cube_size/2, cube_size/2, cube_size/2)
   end
 
   def point_set_renderer

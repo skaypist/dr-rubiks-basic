@@ -31,4 +31,12 @@ class PointSet
   def find(a)
     points.find(a)
   end
+
+  def inspect
+    points.map { |p| p.inspect }.join(' ')
+  end
+
+  def to_s
+    inspect
+  end
 end
