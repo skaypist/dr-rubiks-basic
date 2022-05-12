@@ -2,8 +2,18 @@ class App
   include MatrixFunctions
 
   def perform_tick args
+    PolygonRenderer.new(square).render
     point_set_renderer.render(cube)
     # args.gtk.request_quit if args.state.tick_count > 1
+  end
+
+  def square
+    PointSet.new(
+      vec3(100, 100, 0),
+      vec3(110, 150, 0),
+      vec3(200, 200, 0),
+      vec3(160, 130, 0),
+    )
   end
 
   def cube
