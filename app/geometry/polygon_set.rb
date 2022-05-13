@@ -7,9 +7,10 @@ class PolygonSet
 
   # hmm
   def rotate(**kwargs)
-    @polygons = @polygons.map do |p|
+    new_polygons = @polygons.map do |p|
       p.rotate(**kwargs)
     end
-    self
+
+    PolygonSet.new(*new_polygons)
   end
 end

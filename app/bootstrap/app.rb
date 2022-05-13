@@ -1,20 +1,45 @@
 class App
   include MatrixFunctions
 
+  LINE_ORDER = {
+    line: 0,
+    solid: 1,
+  }
+
   def perform_tick args
-    cube.polygons.each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
+    # puts $gtk.args.state.z_primitives
+    $gtk.args.state.z_primitives = []
+    rotated_cube.polygons.each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
+    perform_rendering
     # args.gtk.request_quit if args.state.tick_count > 1
+  end
+
+  def perform_rendering
+    $gtk.args.outputs.primitives << $gtk.
+      args.
+      state.
+      z_primitives.
+      sort do |zta, ztb|
+      zcomp = (ztb.z <=> zta.z)
+      if zcomp == 0
+        LINE_ORDER[ztb.primitive_marker] <=> LINE_ORDER[zta.primitive_marker]
+      end
+
+      zcomp
+    end
   end
 
   def cube
     # @cube ||= Cube.build_simple(cube_corner, cube_size)
-    Cube.
-      build_cube_faces(cube_corner, cube_size).
-      rotate(
-        around: rotation_axis,
-        at: cube_center,
-        by: rotation_angle
-      )
+    @cube ||= Cube.build_cube_faces(cube_corner, cube_size)
+  end
+
+  def rotated_cube
+    cube.rotate(
+      around: rotation_axis,
+      at: cube_center,
+      by: rotation_angle
+    )
   end
 
   def rotation_angle
