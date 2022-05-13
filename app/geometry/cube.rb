@@ -32,6 +32,33 @@ class Cube
     PointSet.new(*cube_points)
   end
 
+  def self.build_cube_faces(corner, size)
+    cube_points = self.build_simple(corner, size).points
+
+    faces_point_sets = cube_points
+              .combination(4)
+              .to_a
+              .keep_if do |potential_face_points|
+      matching_xs = (potential_face_points.map { |p| p.x }.uniq.count == 1)
+      matching_ys = (potential_face_points.map { |p| p.y }.uniq.count == 1)
+      matching_zs = (potential_face_points.map { |p| p.z }.uniq.count == 1)
+      (matching_xs || matching_ys || matching_zs)
+    end.map do |face_points|
+      fps = face_points.sort_by { |fp| mag2(fp) }
+      PointSet.new(fps[0], fps[1], fps[3], fps[2])
+    end
+
+    PolygonSet.new(*faces_point_sets)
+  end
+
+  def self.coordinates(v3)
+    [v3.x, v3.y, v3.z]
+  end
+
+  def self.mag2(v3)
+    coordinates(v3).map {|c| c*c }.sum
+  end
+
   def primitives
     points.map { |p| GraphicalPoint.new(p).primitive }
   end

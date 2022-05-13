@@ -2,24 +2,14 @@ class App
   include MatrixFunctions
 
   def perform_tick args
-    PolygonRenderer.new(square).render
-    point_set_renderer.render(cube)
+    cube.polygons.each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
     # args.gtk.request_quit if args.state.tick_count > 1
-  end
-
-  def square
-    PointSet.new(
-      vec3(100, 100, 0),
-      vec3(110, 150, 0),
-      vec3(200, 200, 0),
-      vec3(160, 130, 0),
-    )
   end
 
   def cube
     # @cube ||= Cube.build_simple(cube_corner, cube_size)
     Cube.
-      build_simple(cube_corner, cube_size).
+      build_cube_faces(cube_corner, cube_size).
       rotate(
         around: rotation_axis,
         at: cube_center,
