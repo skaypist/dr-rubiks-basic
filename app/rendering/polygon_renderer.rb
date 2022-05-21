@@ -48,6 +48,6 @@ class PolygonRenderer
   attr_reader :polygon_point_set
 
   def points
-    polygon_point_set.points
+    @_points ||= polygon_point_set.points
   end
 end

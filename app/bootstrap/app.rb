@@ -9,7 +9,8 @@ class App
   def perform_tick args
     # puts $gtk.args.state.z_primitives
     $gtk.args.state.z_primitives = []
-    rotated_cube.polygons.each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
+    rotate_cube
+    cube.faces.each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
     perform_rendering
     # args.gtk.request_quit if args.state.tick_count > 1
   end
@@ -31,14 +32,14 @@ class App
 
   def cube
     # @cube ||= Cube.build_simple(cube_corner, cube_size)
-    @cube ||= Cube.build_cube_faces(cube_corner, cube_size)
+    @cube ||= Cube.new(cube_corner, cube_size)
   end
 
-  def rotated_cube
+  def rotate_cube
     cube.rotate(
       around: rotation_axis,
       at: cube_center,
-      by: rotation_angle
+      by: 1,
     )
   end
 
