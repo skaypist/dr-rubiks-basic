@@ -1,6 +1,7 @@
 class Cube
   extend MatrixFunctions
   include MatrixFunctions
+  include VectorHelpers
 
   attr_reader :corner, :size, :faces
 
@@ -11,13 +12,10 @@ class Cube
     @faces = calculate_face_point_sets
   end
 
-  def rotate(around:, at:, by:)
-    @mutable_point_set.rotate(around: around, at: at, by: by)
-    self
-  end
-
-  def translate(vector)
-    @mutable_point_set.translate(vector)
+  def reset!
+    @mutable_point_set.mutable_points.each.with_index do |mp, i|
+      mp.set @canonical_cube_points.points[i]
+    end
   end
 
   def bases
@@ -32,17 +30,22 @@ class Cube
     @mutable_point_set.points
   end
 
-  def self.coordinates(v3)
-    [v3.x, v3.y, v3.z]
+  def point_set
+    @mutable_point_set
   end
 
-  def self.mag2(v3)
-    coordinates(v3).map {|c| c*c }.sum
-  end
-
-  def mag2(v3)
-    self.class.mag2(v3)
-  end
+  #
+  # def self.coordinates(v3)
+  #   [v3.x, v3.y, v3.z]
+  # end
+  #
+  # def self.mag2(v3)
+  #   coordinates(v3).map {|c| c*c }.sum
+  # end
+  #
+  # def mag2(v3)
+  #   self.class.mag2(v3)
+  # end
 
   private
 

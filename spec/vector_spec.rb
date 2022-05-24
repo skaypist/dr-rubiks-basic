@@ -23,6 +23,11 @@ class AboutVector < (Minitest::Test)
     assert_equal(v3, v3a)
   end
 
+  def test_marker
+    v1 = vec3(1,2,3)
+    assert_equal(v1.class, Vec3)
+  end
+
   def test_vector_addition
     v1 = vec3(1,2,3)
     v2 = vec3(3,2,1)

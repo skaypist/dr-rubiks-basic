@@ -12,4 +12,8 @@ class Mutable
   def set(new_val)
     @keep = new_val
   end
+
+  def value
+    @keep
+  end
 end
