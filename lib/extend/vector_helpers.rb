@@ -1,23 +1,5 @@
 include MatrixFunctions
 
-module VectorHelpers
-  include MatrixFunctions
-
-  def rotation_matrix(around:, angle:)
-    u_x = around.x
-    u_y = around.y
-    u_z = around.z
-
-    c = Math.cos(angle * DEGREES_TO_RADIANS)
-    s = Math.sin(angle * DEGREES_TO_RADIANS)
-    t = 1.0 - c
-
-    mat3(t*u_x*u_x+c, t*u_x*u_y - s*u_z, t*u_x*u_z + s*u_y,
-         t*u_x*u_y + s*u_z, t*u_y*u_y+c, t*u_y*u_z - s*u_y,
-         t*u_x*u_z - s*u_y, t*u_y*u_z + c*u_x, t*u_z*u_z+c)
-  end
-end
-
 class RotationCache
   include MatrixFunctions
 
@@ -95,7 +77,7 @@ module VectorOps
   end
 
   def translate!(other)
-    self += other
+    self.send('+='.to_sym, other)
   end
 
   def rotation_matrix(around:, by:)

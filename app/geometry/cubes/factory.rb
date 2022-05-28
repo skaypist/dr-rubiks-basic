@@ -2,7 +2,6 @@ module Cubes
   class Factory
     extend MatrixFunctions
     include MatrixFunctions
-    include VectorHelpers
 
     attr_reader :corner, :size
 
@@ -59,7 +58,7 @@ module Cubes
         matching_zs = (potential_face_points.map { |p| p.value.z }.uniq.count == 1)
         (matching_xs || matching_ys || matching_zs)
       end.map do |face_points|
-        fps = face_points.sort_by { |fp| mag2(fp.value) }
+        fps = face_points.sort_by { |fp| fp.value.mag2 }
         MutablePointSet.new(fps[0], fps[1], fps[3], fps[2])
       end
     end
