@@ -70,8 +70,8 @@ class MutablePointSet
   end
 
   def map!
-    mutable_points.each do |p|
-      p.set(yield p.value)
+    mutable_points.each.with_index do |p, i|
+      p.set(yield p.value, i)
     end
     self
   end
