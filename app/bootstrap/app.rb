@@ -31,8 +31,7 @@ class App
   end
 
   def cube
-    # @cube ||= Cube.build_simple(cube_corner, cube_size)
-    @cube ||= Cube.new(cube_corner, cube_size)
+    @cube ||= Cubes::Factory.build(cube_corner, cube_size)
   end
 
   def rotate_cube!
