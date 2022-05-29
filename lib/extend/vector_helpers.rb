@@ -1,5 +1,7 @@
 include MatrixFunctions
 
+DEGREES_TO_RADIANS = Math::PI / 180
+
 class RotationCache
   include MatrixFunctions
 
@@ -94,13 +96,11 @@ module VectorOps
   end
 
   def assign(other)
-    if other.coordinates.count == coordinates.count
-      %i[w x y z].each do |c|
-        cv = other[c]
-        self[c] = cv unless cv.nil?
-      end
-      self
+    %i[w x y z].each do |c|
+      cv = other.send(c)
+      self.send("#{c}=".to_sym, cv) unless cv.nil?
     end
+    self
   end
 
   define_method(:'*=') {|other| assign(self * other)}

@@ -12,14 +12,10 @@ module Cubes
     def self.build(corner, size)
       factory = new(corner, size)
       points = factory.calculate_cube_points
-      initial_point_set = PointSet.new(*points)
-      mutable_points = MutablePointSet.from_points(*points)
-      faces = factory.calculate_face_point_sets(mutable_points)
-      Cube.new(
-        initial: initial_point_set,
-        mutable: mutable_points,
-        faces: faces
-      )
+      initial = PointSet.new(*points)
+      mutable = PointSet.new(*points.map { |p| p.dup })
+      faces = factory.calculate_face_point_sets(mutable)
+      Cube.new(initial: initial, mutable: mutable, faces: faces)
     end
 
     def bases
@@ -49,17 +45,17 @@ module Cubes
 
     def calculate_face_point_sets(mutable_point_set)
       mutable_point_set
-        .mutable_points
+        .to_a
         .combination(4)
         .to_a
         .keep_if do |potential_face_points|
-        matching_xs = (potential_face_points.map { |p| p.value.x }.uniq.count == 1)
-        matching_ys = (potential_face_points.map { |p| p.value.y }.uniq.count == 1)
-        matching_zs = (potential_face_points.map { |p| p.value.z }.uniq.count == 1)
+        matching_xs = (potential_face_points.map { |p| p.x }.uniq.count == 1)
+        matching_ys = (potential_face_points.map { |p| p.y }.uniq.count == 1)
+        matching_zs = (potential_face_points.map { |p| p.z }.uniq.count == 1)
         (matching_xs || matching_ys || matching_zs)
       end.map do |face_points|
-        fps = face_points.sort_by { |fp| fp.value.mag2 }
-        MutablePointSet.new(fps[0], fps[1], fps[3], fps[2])
+        fps = face_points.sort_by { |fp| fp.mag2 }
+        PointSet.new(fps[0], fps[1], fps[3], fps[2])
       end
     end
   end

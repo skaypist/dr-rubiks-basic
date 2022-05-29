@@ -36,7 +36,7 @@ class App
 
   def rotate_cube!
     cube.reset!
-    cube.point_set.rotate(
+    cube.rotate(
       around: rotation_axis,
       at: cube_center,
       by: rotation_angle,
@@ -48,7 +48,7 @@ class App
   end
 
   def rotation_axis
-    normalize(add(cube_center, Transforms.scale3(cube_corner, -1)))
+    normalize(add(cube_center, (cube_corner * -1)))
   end
 
   def rotation_point

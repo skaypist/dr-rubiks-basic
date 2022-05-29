@@ -1,14 +1,19 @@
 class Cube
-  attr_reader :faces
+  attr_reader :faces, :mutable, :initial
 
   def initialize(initial:, mutable:, faces:)
     @initial, @mutable, @faces = initial, mutable, faces
   end
 
   def reset!
-    @mutable.map! do |_p, i|
-      @initial.points[i]
+    @mutable.points.each.with_index do |p, i|
+      p.assign(@initial.points[i])
     end
+    self
+  end
+
+  def rotate(**kwargs)
+    @mutable.rotate!(**kwargs)
   end
 
   def points
