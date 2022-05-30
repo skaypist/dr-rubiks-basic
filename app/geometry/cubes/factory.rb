@@ -3,27 +3,19 @@ module Cubes
     extend MatrixFunctions
     include MatrixFunctions
 
-    attr_reader :corner, :size
+    attr_reader :corner, :size, :bases
 
-    def initialize(corner, size)
-      @corner, @size = corner, size
+    def initialize(corner, bases)
+      @corner, @bases = corner, bases
     end
 
-    def self.build(corner, size)
-      factory = new(corner, size)
+    def self.build(corner, bases)
+      factory = new(corner, bases)
       points = factory.calculate_cube_points
       initial = PointSet.new(*points)
       mutable = PointSet.new(*points.map { |p| p.dup })
       faces = factory.calculate_face_point_sets(mutable)
-      Cube.new(initial: initial, mutable: mutable, faces: faces)
-    end
-
-    def bases
-      @bases ||= [
-        vec3(size,0,0),
-        vec3(0,size,0),
-        vec3(0,0,size)
-      ]
+      Cube.new(initial: initial, mutable: mutable, faces: faces, corner: corner)
     end
 
     def calculate_cube_points
@@ -49,13 +41,10 @@ module Cubes
         .combination(4)
         .to_a
         .keep_if do |potential_face_points|
-        matching_xs = (potential_face_points.map { |p| p.x }.uniq.count == 1)
-        matching_ys = (potential_face_points.map { |p| p.y }.uniq.count == 1)
-        matching_zs = (potential_face_points.map { |p| p.z }.uniq.count == 1)
-        (matching_xs || matching_ys || matching_zs)
+        Polygon.calculate_shared(potential_face_points).any?
       end.map do |face_points|
         fps = face_points.sort_by { |fp| fp.mag2 }
-        PointSet.new(fps[0], fps[1], fps[3], fps[2])
+        Polygon.new(fps[0], fps[1], fps[3], fps[2])
       end
     end
   end
