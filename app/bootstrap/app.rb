@@ -1,52 +1,19 @@
 class App
   include MatrixFunctions
 
-  LINE_ORDER = {
-    line: 0,
-    solid: 1,
-  }
-
   def perform_tick args
-    # puts $gtk.args.state.z_primitives
     $render_buffer = []
-    # $gtk.args.state.z_primitives = []
     rotate_cube!
     cube.
       farthest_cubies_first.
       map(&:faces).
-    #   map do |cubie|
-    #   [
-    #     *cubie.occluded_faces.zip([true, true, true]),
-    #     *cubie.visible_faces.zip([true, true, true])
-    #   ]
-    # end.
       flatten(1).
       each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
-      # each { |polygon_pointset, with_edges| PolygonRenderer.new(polygon_pointset).render(with_edges) }
     perform_rendering
-    # cube.cubies.map(&:nearest_corner).first(27)
-    #     .map { |np| point_renderer.render(np) }
-
-    # args.gtk.request_quit if args.state.tick_count > 1
   end
 
   def perform_rendering
     $gtk.args.outputs.primitives << $render_buffer
-      # sort do |zta, ztb|
-      # ztb.z <=> zta.z
-      # end
-      # $gtk.
-      # args.
-      # state.
-      # z_primitives.
-      # sort_by { |p| p.z }
-      # zcomp = (ztb.z <=> zta.z)
-      # if zcomp == 0
-      #   LINE_ORDER[ztb.primitive_marker] <=> LINE_ORDER[zta.primitive_marker]
-      # end
-      #
-      # zcomp
-    # end
   end
 
   def cube
@@ -63,8 +30,7 @@ class App
   end
 
   def rotation_angle
-    (($gtk.args.state.tick_count/12.0) % 180) + 180
-    # (($gtk.args.state.tick_count * 5) % 360)
+    (($gtk.args.state.tick_count*2) % 180) + 180
   end
 
   def rotation_axis

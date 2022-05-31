@@ -37,9 +37,7 @@ module Rubiks
         .combination(dim_count)
         .to_a
         .product([-1, 1])
-        .map { |d, c| puts "d: #{d} | c: #{c}"; [d, c]  }
         .map { |d, c| d.map { |di| di*c }.reduce(center_corner, &:+) }
-        .map { |e| puts "e: #{e}"; e  }
         .map {|block_corner| Cubes::Factory.build(block_corner, bases) }
     end.flatten(1)
   end

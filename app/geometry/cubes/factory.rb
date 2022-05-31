@@ -1,6 +1,5 @@
 module Cubes
   class Factory
-    extend MatrixFunctions
     include MatrixFunctions
 
     attr_reader :corner, :size, :bases
