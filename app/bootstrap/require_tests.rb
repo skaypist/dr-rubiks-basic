@@ -1,5 +1,5 @@
 require 'lib/minitest.rb'
-require 'lib/extend/vector_helpers.rb'
+require 'lib/vector_helpers.rb'
 require 'spec/vector_spec.rb'
 require 'app/geometry/point_set.rb'
 require 'app/rendering/point_renderer.rb'

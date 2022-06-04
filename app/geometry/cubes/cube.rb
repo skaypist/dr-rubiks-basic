@@ -38,4 +38,8 @@ class Cube
   def nearest_corner
     @mutable.max_by { |p| p.z }
   end
+
+  def nearest_starting_corner
+    @initial.max_by { |p| p.z }
+  end
 end

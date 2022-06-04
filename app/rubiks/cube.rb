@@ -23,5 +23,9 @@ module Rubiks
     def farthest_cubies_first
       @cubes.sort_by {|c| c.nearest_corner.z }
     end
+
+    def farthest_starting_cubies_first
+      @cubes.sort_by {|c| c.nearest_starting_corner.z }
+    end
   end
 end

@@ -3,7 +3,7 @@ class App
 
   def perform_tick _args
     $render_buffer = []
-    rotating_cube.perform_tick
+    rotating_cubies_controller.on_tick(_args)
     perform_rendering
   end
 
@@ -11,8 +11,19 @@ class App
     $gtk.args.outputs.primitives << $render_buffer
   end
 
-  def rotating_cube
-    @rotating_cube ||= RotatingCubies.new
+  def drag_provider
+    @drag_provider ||= ::Dragging::DragProvider.instance
+  end
+
+  def rotating_cubies_controller
+    @rotating_cubies_controller ||= RotatingCubies::Controller.new(
+      activity: rotating_cubies_activity,
+      drag_provider: drag_provider,
+    )
+  end
+
+  def rotating_cubies_activity
+    @rotating_cubies_activity ||= RotatingCubies::Activity.new
   end
 
   def point_set_renderer

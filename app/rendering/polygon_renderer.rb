@@ -28,26 +28,6 @@ class PolygonRenderer
     points[1..-1].each_cons(2) do |(b, c)|
       output_triangle(points.first, b, c)
     end
-    # points
-    #   .cycle
-    #   .each_cons(2)
-    #   .take(4)
-    #   .each {|(a,b)| output_edge(a,b) }
-
-    # points
-    #   .cycle
-    #   .each_cons(2)
-    #   .take(4)
-    #   .sort_by { |(a,b)| [a.z, b.z].max }
-    #   .first(2)
-    #   .each {|(a,b)| output_edge(a,b) }
-
-    # i = points.index(@polygon_point_set.nearest_corner)
-
-    # irange = (i-1)..(i+1)
-    # points[irange].each_cons(2).take(2).each do |(a,b)|
-    #   output_edge(a,b)
-    # end
   end
 
   def output_edge(a,b)
