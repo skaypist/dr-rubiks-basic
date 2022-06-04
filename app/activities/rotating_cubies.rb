@@ -2,8 +2,8 @@ module RotatingCubies
   class Activity
     include MatrixFunctions
 
-    CENTER_COORDINATES = [400, 400, 0]
-    CUBE_SIZE = 200
+    CENTER_COORDINATES = [300, 300, 0]
+    CUBE_SIZE = 150
 
     def perform_tick
       rotate_cube!
@@ -33,8 +33,6 @@ module RotatingCubies
 
     def load_cube_primitives
       cube.
-        # farthest_starting_cubies_first.
-        # first(num_cubies_shown).
         farthest_cubies_first.
         map(&:visible_faces).
         flatten(1).
@@ -42,7 +40,7 @@ module RotatingCubies
     end
 
     def rotation_angle
-      (($gtk.args.state.tick_count*2) % 180) + 180
+      $gtk.args.state.tick_count % 360
     end
 
     def rotation_axis
