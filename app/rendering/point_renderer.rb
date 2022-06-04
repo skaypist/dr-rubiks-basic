@@ -13,7 +13,7 @@ class PointRenderer
 
 
   def render(point)
-    $gtk.args.outputs.primitives << {
+    $render_buffer << {
       path: sprite_asset.path,
       w: sprite_asset.w,
       h: sprite_asset.h,
@@ -21,7 +21,8 @@ class PointRenderer
       y: point.y - (sprite_asset.h/2.0),
       primtive_marker: :sprite
     }
-    $gtk.args.outputs.primitives << {
+
+    $render_buffer << {
       text: "(#{point.x.to_i} #{point.y.to_i} #{point.z.to_i})",
       x: point.x, # - (sprite_asset.w/2.0),
       y: point.y, # - (sprite_asset.h/2.0),

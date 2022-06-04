@@ -36,7 +36,7 @@ module RotatingCubies
         # farthest_starting_cubies_first.
         # first(num_cubies_shown).
         farthest_cubies_first.
-        map(&:faces).
+        map(&:visible_faces).
         flatten(1).
         each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
     end
