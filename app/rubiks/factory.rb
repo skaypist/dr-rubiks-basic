@@ -8,7 +8,18 @@ module Rubiks
     end
 
     def build
-      Cube.new(*build_geometric_cubes)
+      Cube.new(*build_cubies)
+    end
+
+    def build_cubies
+      geometric_cubes = build_geometric_cubes
+      geometric_cubes.map do |gc|
+        cubie_factory.build(gc)
+      end
+    end
+
+    def cubie_factory
+      @_cubie_factory ||= CubieFactory.new(bases, center_corner)
     end
 
     def build_geometric_cubes
@@ -29,16 +40,5 @@ module Rubiks
         vec3(0,0,block_size)
       ]
     end
-  end
-
-  def stash_build_geometric_cubes
-    (1..3).to_a.map do |dim_count|
-      bases
-        .combination(dim_count)
-        .to_a
-        .product([-1, 1])
-        .map { |d, c| d.map { |di| di*c }.reduce(center_corner, &:+) }
-        .map {|block_corner| Cubes::Factory.build(block_corner, bases) }
-    end.flatten(1)
   end
 end

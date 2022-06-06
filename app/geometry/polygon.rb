@@ -16,6 +16,6 @@ class Polygon < PointSet
       matching = rest.all? { |p| p[dim] == first[dim] }
       values_by_dims[dim] = first[dim] if matching
     end
-    values_by_dims.values
+    values_by_dims.compact
   end
 end

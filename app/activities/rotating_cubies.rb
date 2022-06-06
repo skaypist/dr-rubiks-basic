@@ -30,13 +30,19 @@ module RotatingCubies
     def add_cubie!
       @_num_cubies_shown = num_cubies_shown + 1 unless num_cubies_shown == 27
     end
+    #
+    # def load_cube_primitives
+    #   cube.
+    #     farthest_cubies_first.
+    #     map(&:visible_faces).
+    #     flatten(1).
+    #     each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
+    # end
 
     def load_cube_primitives
       cube.
         farthest_cubies_first.
-        map(&:visible_faces).
-        flatten(1).
-        each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
+        each { |cubie| CubieRenderer.render(cubie) }
     end
 
     def rotation_angle

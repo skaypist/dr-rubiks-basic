@@ -1,4 +1,5 @@
 class Cube
+  include MatrixFunctions
   attr_reader :faces, :mutable, :initial, :corner
 
   def initialize(initial:, mutable:, faces:, corner:)
@@ -41,5 +42,18 @@ class Cube
 
   def nearest_starting_corner
     @initial.max_by { |p| p.z }
+  end
+
+  def outside_corner
+    @_outside_corner ||= calculate_outside_corner
+  end
+
+  def calculate_outside_corner
+    outside_index = points.
+      map.
+      with_index do |mp, i|
+      [distance(mp, corner), i]
+    end.max.last
+    @mutable.points[outside_index]
   end
 end
