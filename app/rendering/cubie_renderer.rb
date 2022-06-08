@@ -10,10 +10,6 @@ class CubieRenderer
   end
 
   def render
-    # if cubie.layer_characteristics == [{:x=>300.0}, {:y=>180.0}, {:z=>300.0}]
-    #   puts "cubie.visible_faces[0].geometric_face.points"
-    #   puts cubie.visible_faces[0].geometric_face.points
-    # end
     cubie.visible_faces.each do |face|
       render_face(face)
     end
@@ -41,20 +37,17 @@ class CubieRenderer
   end
 
   def output_edge(a, b, color)
-    # $gtk.args.state.z_primitives << {
     $render_buffer << {
       x:  a.x,
       y:  a.y,
       x2: b.x,
       y2: b.y,
       z: [[a.z, b.z].min, 1],
-      # z: [a.z, b.z].min,
       primitive_marker: :line,
     }.merge(color.darken(0.5).to_h)
   end
 
   def output_triangle(a, b, c, color)
-    # $gtk.args.state.z_primitives << {
     $render_buffer << {
       x:  a.x,
       y:  a.y,
@@ -63,7 +56,6 @@ class CubieRenderer
       x3: c.x,
       y3: c.y,
       z: [[a.z, b.z, c.z].min, 0],
-      # z: [a.z, b.z, c.z].min,
       primitive_marker: :solid,
     }.merge(color.to_h)
   end

@@ -26,34 +26,7 @@ class Cube
     @mutable
   end
 
-  def occluded_faces
-    current_nearest_corner = nearest_corner
-    faces.reject { |f| f.points.find(current_nearest_corner) }
-  end
-
-  def visible_faces
-    current_nearest_corner = nearest_corner
-    faces.select { |f| f.points.find { |fp| fp == current_nearest_corner } }
-  end
-
   def nearest_corner
     @mutable.max_by { |p| p.z }
-  end
-
-  def nearest_starting_corner
-    @initial.max_by { |p| p.z }
-  end
-
-  def outside_corner
-    @_outside_corner ||= calculate_outside_corner
-  end
-
-  def calculate_outside_corner
-    outside_index = points.
-      map.
-      with_index do |mp, i|
-      [distance(mp, corner), i]
-    end.max.last
-    @mutable.points[outside_index]
   end
 end

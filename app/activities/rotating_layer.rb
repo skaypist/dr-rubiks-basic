@@ -6,7 +6,7 @@ module RotatingLayer
     CUBE_SIZE = 120
 
     def perform_tick
-      rotate_layer!
+      rotate_layer! unless rotation_paused?
       load_cube_primitives
     end
 
@@ -26,15 +26,11 @@ module RotatingLayer
     end
 
     def rubiks_cube_factory
-      @_rubiks_cube_factory = Rubiks::Factory.new(cube_corner, cube_size)
+      @_rubiks_cube_factory ||= Rubiks::Factory.new(cube_corner, cube_size)
     end
 
     def rotate_layer!
-      # cube.reset!
       layer(5).each do |cubie|
-        # puts "#"
-        # puts cubie.layer_characteristics
-        # puts "#"
         cubie.reset!
         cubie.rotate(
           around: layer_axis,
@@ -46,15 +42,7 @@ module RotatingLayer
           at: cube_center,
           by: 22.5,
         )
-
-        # cubie.rotate(
-        #   around: rotation_axis,
-        #   at: cube_center,
-        #   by: 22.5,
-        # )
       end
-
-      # puts layer(5).first.layer_characteristics if $gtk.args.state.tick_count  == 1
     end
 
     def layer_axis
@@ -66,28 +54,38 @@ module RotatingLayer
     end
 
     def layer_factory
-      # @_layer ||= Rubiks::LayerFactory.new(cube, rubiks_cube_factory.bases, cube_corner)
-      return @_layer if @_layer
-      @_layer = Rubiks::LayerFactory.new(cube, rubiks_cube_factory.bases, cube_corner)
-      # puts "@layer.layer_characteristics"
-      # puts @_layer.get_layer(1).count
-      # puts "+++++++++++++++++++++++++"
-      @_layer
+      @_layer ||= Rubiks::LayerFactory.new(
+        cube,
+        rubiks_cube_factory.bases,
+        cube_corner
+      )
     end
 
-    # def load_cube_primitives
-    #   cube.
-    #     farthest_cubies_first.
-    #     map(&:visible_faces).
-    #     flatten(1).
-    #     each { |polygon_pointset| PolygonRenderer.new(polygon_pointset).render }
-    # end
+    def rotation_paused?
+      @_rotation_paused ||= false
+    end
+
+    def toggle_rotation!
+      @_rotation_paused = !rotation_paused?
+    end
+
+    def add_cubes!
+      @_num_cubes = [num_cubes + 1, 27].min
+    end
+
+    def remove_cubes!
+      @_num_cubes = [num_cubes - 1, 0].max
+    end
+
+    def num_cubes
+      @_num_cubes ||= 27
+    end
 
     def load_cube_primitives
       layer(5).sort_by {|c| c.nearest_corner.z }.
         each { |cubie| CubieRenderer.render(cubie) }
 
-      (cube.cubies - layer(5)).sort_by {|c| c.nearest_corner.z }.
+      (cube.farthest_cubies_first - layer(5)).
         each { |cubie| CubieRenderer.render(cubie) }
     end
 

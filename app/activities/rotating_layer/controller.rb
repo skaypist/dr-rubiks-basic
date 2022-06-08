@@ -1,4 +1,4 @@
-module RotatingCubies
+module RotatingLayer
   class Controller
     attr_reader  :activity, :drag_provider
 
@@ -8,15 +8,23 @@ module RotatingCubies
     end
 
     def on_tick(_args)
+      @activity.toggle_rotation! if spacebar?(_args)
+      @activity.add_cubes! if right_clicked?
+      @activity.remove_cubes! if left_clicked?
       @activity.perform_tick
     end
 
-    def clicked?
+    def click
       # we should be asking a click provider
-      completed = drag_provider.current if drag_provider.complete?
-      return false unless completed
-      completed.x == completed.x2 &&
-        completed.y == completed.y2
+      drag_provider.current if drag_provider.complete?
+    end
+
+    def right_clicked?
+      click && click.btn == :right
+    end
+
+    def left_clicked?
+      click && click.btn == :left
     end
 
     def spacebar?(args)

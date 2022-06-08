@@ -22,9 +22,7 @@ module Rubiks
     def calculate_layers
       @layers = {}
       layer_characteristics.each.with_index do |lc, i|
-        # puts lc if i == 1
         @layers[lc] = cube.cubies.select do |cubie|
-          # puts cubie.layer_characteristics if lc
           cubie.layer_characteristics.include?(lc)
         end
       end
