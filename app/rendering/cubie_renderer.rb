@@ -10,6 +10,10 @@ class CubieRenderer
   end
 
   def render
+    # if cubie.layer_characteristics == [{:x=>300.0}, {:y=>180.0}, {:z=>300.0}]
+    #   puts "cubie.visible_faces[0].geometric_face.points"
+    #   puts cubie.visible_faces[0].geometric_face.points
+    # end
     cubie.visible_faces.each do |face|
       render_face(face)
     end

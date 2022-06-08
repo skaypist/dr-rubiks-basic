@@ -1,4 +1,4 @@
-module RotatingLayer
+module RotatingCubies
   class Controller
     attr_reader  :activity, :drag_provider
 

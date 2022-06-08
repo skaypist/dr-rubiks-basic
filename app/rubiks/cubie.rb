@@ -23,5 +23,12 @@ module Rubiks
     def reset!
       geometric_cube.reset!
     end
+
+    def layer_characteristics
+      geometric_cube.
+        initial.
+        min_by(&:mag2).
+        map { |k,v| {}.tap {|h| h[k] = v} }
+    end
   end
 end

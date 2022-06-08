@@ -3,7 +3,7 @@ class App
 
   def perform_tick _args
     $render_buffer = []
-    rotating_cubies_controller.on_tick(_args)
+    rotating_layer_controller.on_tick(_args)
     perform_rendering
   end
 
@@ -15,15 +15,15 @@ class App
     @drag_provider ||= ::Dragging::DragProvider.instance
   end
 
-  def rotating_cubies_controller
-    @rotating_cubies_controller ||= RotatingCubies::Controller.new(
-      activity: rotating_cubies_activity,
+  def rotating_layer_controller
+    @rotating_cubies_controller ||= RotatingLayer::Controller.new(
+      activity: rotating_layer_activity,
       drag_provider: drag_provider,
     )
   end
 
-  def rotating_cubies_activity
-    @rotating_cubies_activity ||= RotatingCubies::Activity.new
+  def rotating_layer_activity
+    @rotating_cubies_activity ||= RotatingLayer::Activity.new
   end
 
   def point_set_renderer
