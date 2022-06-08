@@ -14,7 +14,7 @@ module Cubes
       initial = PointSet.new(*points)
       mutable = PointSet.new(*points.map { |p| p.dup })
       faces = factory.calculate_face_point_sets(mutable)
-      Cube.new(initial: initial, mutable: mutable, faces: faces, corner: corner)
+      Cube.new(initial: initial, mutable: mutable, faces: faces)
     end
 
     def calculate_cube_points

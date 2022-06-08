@@ -1,10 +1,9 @@
 class Cube
   include MatrixFunctions
-  attr_reader :faces, :mutable, :initial, :corner
+  attr_reader :faces, :mutable, :initial
 
-  def initialize(initial:, mutable:, faces:, corner:)
+  def initialize(initial:, mutable:, faces:)
     @initial, @mutable, @faces = initial, mutable, faces
-    @corner = corner
   end
 
   def reset!

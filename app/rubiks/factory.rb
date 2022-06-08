@@ -30,7 +30,7 @@ module Rubiks
           .combination(dim_count)
           .map {|combo| combo.reduce(center_corner, &:+) }
           .map {|block_corner| Cubes::Factory.build(block_corner, bases) }
-      end.flatten(1).uniq { |c| c.corner}
+      end.flatten(1).uniq { |c| c.initial.sort_by(&:mag2) }
     end
 
     def bases
