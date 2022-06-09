@@ -13,8 +13,7 @@ module Cubes
       points = factory.calculate_cube_points
       initial = PointSet.new(*points)
       mutable = PointSet.new(*points.map { |p| p.dup })
-      faces = factory.calculate_face_point_sets(mutable)
-      Cube.new(initial: initial, mutable: mutable, faces: faces)
+      Cube.new(initial: initial, mutable: mutable) # faces: faces)
     end
 
     def calculate_cube_points
@@ -32,19 +31,6 @@ module Cubes
           end
         end
       end.flatten
-    end
-
-    def calculate_face_point_sets(mutable_point_set)
-      mutable_point_set
-        .to_a
-        .combination(4)
-        .to_a
-        .keep_if do |potential_face_points|
-        Polygon.calculate_shared(potential_face_points).any?
-      end.map do |face_points|
-        fps = face_points.sort_by { |fp| fp.mag2 }
-        Polygon.new(fps[0], fps[1], fps[3], fps[2])
-      end
     end
   end
 end

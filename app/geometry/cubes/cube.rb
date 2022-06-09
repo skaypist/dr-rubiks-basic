@@ -1,9 +1,9 @@
 class Cube
   include MatrixFunctions
-  attr_reader :faces, :mutable, :initial
+  attr_reader :mutable, :initial
 
-  def initialize(initial:, mutable:, faces:)
-    @initial, @mutable, @faces = initial, mutable, faces
+  def initialize(initial:, mutable:)
+    @initial, @mutable = initial, mutable
   end
 
   def reset!

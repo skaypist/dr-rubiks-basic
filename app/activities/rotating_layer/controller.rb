@@ -8,7 +8,7 @@ module RotatingLayer
     end
 
     def on_tick(_args)
-      @activity.toggle_rotation! if spacebar?(_args)
+      @activity.toggle_rotation! if space_bar?(_args)
       @activity.add_cubes! if right_clicked?
       @activity.remove_cubes! if left_clicked?
       @activity.perform_tick
@@ -27,7 +27,7 @@ module RotatingLayer
       click && click.btn == :left
     end
 
-    def spacebar?(args)
+    def space_bar?(args)
       args.inputs.keyboard.key_up.space
     end
   end
