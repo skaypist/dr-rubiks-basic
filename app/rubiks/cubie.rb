@@ -9,7 +9,7 @@ module Rubiks
 
     def visible_faces
       current_nearest_corner = nearest_corner
-      faces.select { |f| f.geometric_face.points.find { |fp| fp == current_nearest_corner } }
+      faces.select { |f| f.points.find { |fp| fp == current_nearest_corner } }
     end
 
     def nearest_corner

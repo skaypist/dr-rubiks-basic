@@ -8,11 +8,10 @@ module Rubiks
     end
 
     def build(cube_points)
-      polygons = build_polygons(cube_points)
-      polygons.map do |g_face|
-        characteristic = g_face.calculate_shared
+      build_polygons(cube_points).map do |polygon|
+        characteristic = cube_face_characteristic(polygon)
         color = characteristic_to_mapping[characteristic] || Colors::BLACK
-        CubieFace.new(g_face, color, characteristic)
+        CubieFace.new(polygon, color, characteristic)
       end
     end
 
@@ -22,11 +21,21 @@ module Rubiks
         .combination(4)
         .to_a
         .keep_if do |potential_face_points|
-        Polygon.calculate_shared(potential_face_points).any?
+        cube_face_characteristic(potential_face_points).any?
       end.map do |face_points|
         fps = face_points.sort_by { |fp| fp.mag2 }
-        Polygon.new(fps[0], fps[1], fps[3], fps[2])
+        PointSet.new(fps[0], fps[1], fps[3], fps[2])
       end
+    end
+
+    def cube_face_characteristic(potential_face_points)
+      first, *rest = *potential_face_points
+      values_by_dims = {}
+      %i[x y z].each do |dim|
+        matching = rest.all? { |p| p[dim] == first[dim] }
+        values_by_dims[dim] = first[dim] if matching
+      end
+      values_by_dims.compact
     end
 
     def characteristic_to_mapping

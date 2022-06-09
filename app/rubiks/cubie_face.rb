@@ -1,9 +1,9 @@
 module Rubiks
-  class CubieFace
-    attr_reader :geometric_face, :color, :characteristic
+  class CubieFace < ::PointSet
+    attr_reader :color, :characteristic
 
     def initialize(geometric_face, color, characteristic)
-      @geometric_face = geometric_face
+      @points = geometric_face.to_a
       @color = color
       @characteristic = characteristic
     end

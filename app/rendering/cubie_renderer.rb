@@ -16,7 +16,7 @@ class CubieRenderer
   end
 
   def render_face(face)
-    points = face.geometric_face.points
+    points = face.points
     edges = points
               .cycle
               .each_cons(2)

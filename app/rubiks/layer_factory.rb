@@ -15,7 +15,7 @@ module Rubiks
         .product([-1, 0, 1])
         .map { |(base, c)| (base * c) + center_corner }
         .map do |offset_base|
-        offset_base.map { |k, v| Hash.new.tap { |h| h[k] = v } }
+          offset_base.map { |k, v| Hash.new.tap { |h| h[k] = v } }
         end.flatten(1).uniq
     end
 
