@@ -25,6 +25,11 @@ module Dragging
     def active?; current.active; end
     def complete?; current.complete; end
     def present?; active? || complete?; end
+    def drag_present?
+      @current.x2 && @current.y2 &&
+        @current.x && @current.y &&
+        active?
+    end
 
     def current
       update! unless up_to_date?
@@ -43,11 +48,13 @@ module Dragging
         @current.complete = false
         @current.modifier = modifier
         @current.btn = mouse.button_left ? :left : :right
-      elsif @current.active && ((!mouse.button_left && left_btn?) || (!mouse.button_right && right_btn?))
+      elsif @current.active
         @current.x2 = mouse.x
         @current.y2 = mouse.y
-        @current.active = false
-        @current.complete = true
+        if ((!mouse.button_left && left_btn?) || (!mouse.button_right && right_btn?))
+          @current.active = false
+          @current.complete = true
+        end
       end
 
       @last_updated = state.tick_count

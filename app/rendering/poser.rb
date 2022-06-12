@@ -19,15 +19,20 @@ class Poser
   end
 
   def pose_cube!
-    t = cube.transform
     dont_reset = cube.layers.actively_posed&.to_a
+
+    t = cube.transforms.first
+    t2 = cube.transforms.second
+
     (cube.cubies - dont_reset).each do |cubie|
       cubie.reset!
       cubie.rotate(around: t.around, at: t.at, by: t.by)
+      cubie.rotate(around: t2.around, at: t2.at, by: t2.by) if t2
     end
 
     dont_reset.each do |cubie|
       cubie.rotate(around: t.around, at: t.at, by: t.by)
+      cubie.rotate(around: t2.around, at: t2.at, by: t2.by) if t2
     end
   end
 

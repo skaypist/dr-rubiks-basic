@@ -6,8 +6,8 @@ module RotatingLayer
     CUBE_SIZE = 120
 
     def perform_tick
-      rotate_layer! unless rotation_paused?
-      rotate_cube! unless rotation_paused?
+      # rotate_layer! unless rotation_paused?
+      # rotate_cube! unless rotation_paused?
       poser.pose!
       load_cube_primitives
     end
@@ -24,8 +24,28 @@ module RotatingLayer
       @poser ||= Poser.new(cube)
     end
 
+    def collapse_pose!
+      cube.collapse_pose!
+    end
+
+    def drag(draggy)
+      around = vec3(
+        # CUBE_SIZE*1.5*Math.acos(draggy[:x2] - draggy[:x]),
+        draggy.y - draggy.y2,
+        draggy.x2 - draggy.x,
+        # CUBE_SIZE*1.5*Math.acos(draggy[:y2] - draggy[:y])
+        0
+      )
+      cube.second_transform = Pose.new(
+        around: normalize(around),
+        at: cube_center,
+        # by: $gtk.args.geometry.angle_to(vec2(0,1), normalize(around))
+        by: around.mag2 / (3*CUBE_SIZE)
+      )
+    end
+
     def rotate_cube!
-      cube.transform.by = cube.transform.by + 3
+      cube.transforms.first.by = cube.transforms.first.by + 3
     end
 
     def rotate_layer!
@@ -62,6 +82,10 @@ module RotatingLayer
 
       (cube.farthest_cubies_first - cube.layers.actively_posed.to_a).
         each { |cubie| CubieRenderer.render(cubie) }
+    end
+
+    def cube_center
+      (cube_corner + vec3(cube_size, cube_size, cube_size)*0.5)
     end
 
     def cube_size

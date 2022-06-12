@@ -1,11 +1,36 @@
 module Rubiks
   class Cube
-    attr_reader :cubies, :layers, :transform
+    attr_reader :cubies, :layers, :transforms
 
     def initialize(cubies, layers, initial_transform)
       @cubies = cubies
       @layers = layers
-      @transform = initial_transform
+      @transforms = []
+      @transforms << initial_transform
+    end
+
+    def second_transform=(second_pose)
+      if @transforms.length == 1
+        @transforms << second_pose
+      end
+
+      transforms.second.at = second_pose.at
+      transforms.second.by = second_pose.by
+      transforms.second.around = second_pose.around
+    end
+
+    def collapse_cube!
+      if @transforms[1]
+        mat1 = RotationCache.rotation_matrix(
+          around: @transforms[0].around,
+          by: @transforms[0].by
+        )
+        mat2 = RotationCache.rotation_matrix(
+          around: @transforms[1].around,
+          by: @transforms[1].by
+        )
+        
+      end
     end
 
     def farthest_cubies_first
