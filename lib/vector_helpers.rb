@@ -56,6 +56,12 @@ module VectorOps
     values
   end
 
+  def angle_to(other)
+    ns = normalize(self)
+    nother = normalize(other)
+    Math.acos(dot(ns, nother))
+  end
+
   def -(other)
     add(self,(other * (-1)))
   end

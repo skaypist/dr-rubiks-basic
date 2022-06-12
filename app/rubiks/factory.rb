@@ -8,7 +8,10 @@ module Rubiks
     end
 
     def build
-      Cube.new(*build_cubies)
+      cubies = build_cubies
+      layers = layers(cubies)
+      initial_transform = Pose.build_initial(bases, center_corner)
+      Cube.new(cubies, layers, initial_transform)
     end
 
     def build_cubies
@@ -20,6 +23,10 @@ module Rubiks
 
     def cubie_factory
       @_cubie_factory ||= CubieFactory.new(bases, center_corner)
+    end
+
+    def layers(cubies)
+      LayersFactory.new(cubies, bases, center_corner).build
     end
 
     def build_geometric_cubes

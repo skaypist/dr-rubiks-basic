@@ -2,63 +2,38 @@ module RotatingLayer
   class Activity
     include MatrixFunctions
 
-    CENTER_COORDINATES = [300, 300, 300]
+    CENTER_COORDINATES = [240, 240, 240]
     CUBE_SIZE = 120
 
     def perform_tick
       rotate_layer! unless rotation_paused?
+      rotate_cube! unless rotation_paused?
+      poser.pose!
       load_cube_primitives
     end
 
     def cube
-      return @cube if @cube
-      @cube = rubiks_cube_factory.build
-      rotate_cube!
-      @cube
-    end
-
-    def rotate_cube!
-      @cube.rotate(
-        around: rotation_axis,
-        at: cube_center,
-        by: 22.5,
-      )
+      @cube ||= rubiks_cube_factory.build
     end
 
     def rubiks_cube_factory
       @_rubiks_cube_factory ||= Rubiks::Factory.new(cube_corner, cube_size)
     end
 
+    def poser
+      @poser ||= Poser.new(cube)
+    end
+
+    def rotate_cube!
+      cube.transform.by = cube.transform.by + 3
+    end
+
     def rotate_layer!
-      layer(5).each do |cubie|
-        cubie.reset!
-        cubie.rotate(
-          around: layer_axis,
-          at: cube_center,
-          by: rotation_angle,
-        )
-        cubie.rotate(
-          around: rotation_axis,
-          at: cube_center,
-          by: 22.5,
-        )
-      end
+      cube.layers.rotate(5, 3)
     end
 
     def layer_axis
       normalize(vec3(0, 180, 0))
-    end
-
-    def layer(i)
-      layer_factory.get_layer(i)
-    end
-
-    def layer_factory
-      @_layer ||= Rubiks::LayerFactory.new(
-        cube,
-        rubiks_cube_factory.bases,
-        cube_corner
-      )
     end
 
     def rotation_paused?
@@ -82,23 +57,11 @@ module RotatingLayer
     end
 
     def load_cube_primitives
-      layer(5).sort_by {|c| c.nearest_corner.z }.
+      cube.layers.actively_posed.sort_by {|c| c.nearest_corner.z }.
         each { |cubie| CubieRenderer.render(cubie) }
 
-      (cube.farthest_cubies_first - layer(5)).
+      (cube.farthest_cubies_first - cube.layers.actively_posed.to_a).
         each { |cubie| CubieRenderer.render(cubie) }
-    end
-
-    def rotation_angle
-      $gtk.args.state.tick_count % 360
-    end
-
-    def rotation_axis
-      normalize(add(cube_center, (cube_corner * -1)))
-    end
-
-    def cube_center
-      (cube_corner + vec3(cube_size, cube_size, cube_size)*0.5)
     end
 
     def cube_size

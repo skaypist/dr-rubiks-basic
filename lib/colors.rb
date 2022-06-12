@@ -17,6 +17,10 @@ class Colors
     self.class.new(vals, name)
   end
 
+  def inspect
+    name
+  end
+
 
   BLACK   = new([25, 25, 25, 255], :black)
   RED     = new([255, 0, 0, 255], :red)
