@@ -25,7 +25,7 @@ module RotatingLayer
     end
 
     def collapse_pose!
-      cube.collapse_pose!
+      poser.collapse_pose!
     end
 
     def drag(draggy)
@@ -36,11 +36,12 @@ module RotatingLayer
         # CUBE_SIZE*1.5*Math.acos(draggy[:y2] - draggy[:y])
         0
       )
-      cube.second_transform = Pose.new(
-        around: normalize(around),
+      cube.second_transform = QuaternionPose.new(
+        quaternion: Quaternion.from_vector(
+          around: normalize(around),
+          by: around.mag2 / (3*CUBE_SIZE)
+        ),
         at: cube_center,
-        # by: $gtk.args.geometry.angle_to(vec2(0,1), normalize(around))
-        by: around.mag2 / (3*CUBE_SIZE)
       )
     end
 

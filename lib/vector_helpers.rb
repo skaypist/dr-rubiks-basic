@@ -97,7 +97,23 @@ module VectorOps
       .translate(at)
   end
 
-  def rotate!(around:, by:, at:)
+  def rotate!(**kwargs)
+    if kwargs[:quaternion]
+      rotate_q!(**kwargs)
+    else
+      rotate_mat!(**kwargs)
+    end
+  end
+
+  def rotate_q!(quaternion:, at:)
+    qrmat = QuaternionRotationCache.rotation_matrix(quaternion)
+    assign(
+      (translate(at * -1)*qrmat)
+        .translate(at)
+    )
+  end
+
+  def rotate_mat!(around:, by:, at:)
     assign(rotate(around: around, at: at, by: by))
   end
 

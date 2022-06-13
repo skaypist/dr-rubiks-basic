@@ -10,7 +10,7 @@ module Rubiks
     def build
       cubies = build_cubies
       layers = layers(cubies)
-      initial_transform = Pose.build_initial(bases, center_corner)
+      initial_transform = QuaternionPose.build_initial(bases, center_corner)
       Cube.new(cubies, layers, initial_transform)
     end
 

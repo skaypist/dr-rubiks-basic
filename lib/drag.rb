@@ -28,7 +28,7 @@ module Dragging
     def drag_present?
       @current.x2 && @current.y2 &&
         @current.x && @current.y &&
-        active?
+        (active? || complete?)
     end
 
     def current

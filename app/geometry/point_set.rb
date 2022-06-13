@@ -13,9 +13,9 @@ class PointSet
     @points.each
   end
 
-  def rotate!(around:, at:, by:)
+  def rotate!(**kwargs)
     each do |p|
-      p.rotate!(around: around, at: at, by: by)
+      p.rotate!(**kwargs)
     end
   end
 

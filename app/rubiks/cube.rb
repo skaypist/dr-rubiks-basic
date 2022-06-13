@@ -12,24 +12,15 @@ module Rubiks
     def second_transform=(second_pose)
       if @transforms.length == 1
         @transforms << second_pose
+      else
+        @transforms[1] = second_pose
       end
-
-      transforms.second.at = second_pose.at
-      transforms.second.by = second_pose.by
-      transforms.second.around = second_pose.around
     end
 
-    def collapse_cube!
+    def collapse_pose!
       if @transforms[1]
-        mat1 = RotationCache.rotation_matrix(
-          around: @transforms[0].around,
-          by: @transforms[0].by
-        )
-        mat2 = RotationCache.rotation_matrix(
-          around: @transforms[1].around,
-          by: @transforms[1].by
-        )
-        
+        @transforms[0] = @transforms[1] * @transforms[0]
+        @transforms.delete_at(1)
       end
     end
 
@@ -45,9 +36,9 @@ module Rubiks
       cubies.each(&:reset!)
     end
 
-    def rotate(around:, at:, by:)
+    def rotate(**kwargs)
       cubies.each do |c|
-        c.rotate(around: around, at: at, by: by)
+        c.rotate(**kwargs)
       end
     end
   end

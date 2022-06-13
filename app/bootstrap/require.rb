@@ -1,5 +1,6 @@
 require 'lib/utils.rb'
 require 'lib/drag.rb'
+require 'lib/quaternion.rb'
 require 'lib/vector_helpers.rb'
 require 'lib/colors.rb'
 require 'app/geometry/point_set.rb'
