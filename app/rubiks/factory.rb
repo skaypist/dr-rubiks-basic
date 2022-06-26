@@ -48,18 +48,7 @@ module Rubiks
       cube_corner = center_corner - bases.reduce(&:+)
       cube_bases = bases.map { |b| b*3.0 }
       big_cube = Cubes::Factory.build(cube_corner , cube_bases)
-      big_cubie = CubieFactory.new(bases, center_corner).build(big_cube, true)
-=begin
-      cube_faces = big_cubie.faces.map do |face|
-        CubeFace.new(face.points, face.color, face.characteristic)
-      end
-=end
-      # CubeFaces.new(big_cubie, cube_faces)
-      puts "big_cubie.faces:"
-      big_cubie.faces.each { |f| puts f.inspect }
-      puts "---"
-      big_cubie
-      # CubeFaces.new(big_cubie, big_cubie.faces)
+      CubieFactory.new(bases, center_corner).build(big_cube, true)
     end
 
     def bases
@@ -70,72 +59,4 @@ module Rubiks
       ]
     end
   end
-
-  # class CubeFaces
-  #   include Enumerable
-  #   attr_reader :cubie
-  #
-  #   def initialize(big_cubie, cube_faces)
-  #     @cube_faces = cube_faces
-  #     @cubie = big_cubie
-  #   end
-  #
-  #   def each
-  #     @cube_faces.each { |cubie| yield cubie } if block_given?
-  #     @cube_faces.each
-  #   end
-  #
-  #   def visible
-  #     chars = cubie.visible_faces.map(&:characteristic)
-  #     # @cube_faces.sort_by do |cf|
-  #     #   cf.geometric_face.max_by(&:z).z
-  #     # end.last(3)
-  #     @cube_faces.select { |cube_face| chars.include?(cube_face.characteristic) }
-  #   end
-  # end
-  #
-  # class CubeFace
-  #   include CheckFaceContains
-  #   attr_reader :geometric_face, :color, :characteristic
-  #
-  #   def inspect
-  #     { color: color.name,
-  #       characteristic: characteristic.inspect,
-  #       # start: geometric_face.first,
-  #       # edge1: line_between(0,1).round,
-  #       # edge2: line_between(3,0).round
-  #     }.to_s
-  #   end
-  #
-  #   def initialize(geometric_face, color, characteristic)
-  #     @characteristic = characteristic
-  #     @geometric_face = geometric_face
-  #     @color = color
-  #   end
-  #
-  #   # def contains?(point)
-  #   #   between_first_pair?(point) &&
-  #   #     between_second_pair?(point)
-  #   # end
-  #   #
-  #   # def between_first_pair?(point)
-  #   #   ray_test(point, line_between(0,1)) != ray_test(point, line_between(3, 2))
-  #   # end
-  #   #
-  #   # def between_second_pair?(point)
-  #   #   ray_test(point, line_between(3,0)) != ray_test(point, line_between(2, 1))
-  #   # end
-  #   #
-  #   # def ray_test(point, line)
-  #   #   $gtk.args.geometry.ray_test(
-  #   #     point.except(:z),
-  #   #     line
-  #   #   )
-  #   # end
-  #   #
-  #   # def line_between(i, j)
-  #   #   geometric_face[i].to_h.except(:z).
-  #   #     merge(x2: geometric_face[j].x, y2: geometric_face[j].y)
-  #   # end
-  # end
 end

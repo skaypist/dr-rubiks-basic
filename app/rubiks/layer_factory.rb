@@ -29,7 +29,6 @@ module Rubiks
           offset_base.map { |k, v| Hash.new.tap { |h| h[k] = v } }
             .map { |h| CharacteristicRegistry.register(h) }
         end.flatten(1).uniq
-      # cubies.flat_map(&:layer_characteristics).uniq
     end
 
     def layers
@@ -54,7 +53,6 @@ module Rubiks
     end
 
     def build
-      # edge_cubies.each { |ec| puts ec.initial_center.round }
       face_characteristics = edge_cubies.map(&:face_characteristics).reduce(&:|)
       edge_face_characteristics = face_characteristics.reject do |face_characteristic|
         face_characteristic.key == characteristic.key
@@ -64,8 +62,6 @@ module Rubiks
       end
 
       cubie_characteristic = cubies.map(&:cubie_characteristic).reduce(&:&).first
-      puts "cubie characteristic"
-      puts "  #{cubie_characteristic.inspect}"
       Layer.new(
         edge_cubies: ordered_edge_cubies,
         center_cubie: center_cubie,
@@ -135,18 +131,9 @@ module Rubiks
       layers.find do |layer|
         matches_cubies = (layer.to_a & cubies).count == 2
         matches_face = layer.edge_face_characteristics.include?(edge_face_char)
-        # puts " *****"
-        # puts "did not match layer with cubie_characteristic:"
-        # puts layer.cubie_characteristic.inspect
-        # puts "matches_cubies #{matches_cubies}  |   matches_face #{matches_face}"
-        # puts " *****"
         matches_cubies && matches_face
       end
     end
-
-    # def by_characteristic(char)
-    #   @layers.find { |layer| layer.characteristic == char}
-    # end
 
     def rotate(i, angle)
       @actively_posed = get_layer(i)

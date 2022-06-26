@@ -5,22 +5,11 @@ module Rubiks
     def initialize(full_cube_bases, center_corner, cube_face_characteristics)
       @bases, @center_corner = full_cube_bases, center_corner
       @cube_face_characteristics = cube_face_characteristics
-      # @@debugged = false
     end
 
     def build(cube_points)
-      # unless @@debugged
-      #   if debug
-      #     puts "characteristic_to_mapping:"
-      #     characteristic_to_mapping.each do |k, v|
-      #       puts "#{k} : #{v.name}"
-      #     end
-      #     @@debugged = true
-      #   end
-      # end
       build_polygons(cube_points).map do |polygon|
         characteristic = CharacteristicRegistry.register(cube_face_characteristic(polygon))
-        # puts characteristic.value if debug
         color = (characteristic_to_mapping[characteristic.value] || Colors::BLACK).clone
         CubieFace.new(polygon, color, characteristic)
       end
@@ -54,21 +43,6 @@ module Rubiks
                                        .zip(face_colors)
                                        .to_h
     end
-    #
-    # def full_cube_bases
-    #   @cube_bases ||= bases
-    #     .product([-1, 2])
-    #     .map { |(base, sign)| base * sign }
-    # end
-    #
-
-    # def cube_face_characteristics
-    #   bases.map do |signed_base|
-    #     face_pt = signed_base + center_corner
-    #     dim = signed_base.find { |_k, v| v != 0 }.first
-    #     Hash.new.tap {|h| h[dim] = face_pt[dim] }
-    #   end
-    # end
 
     def face_colors
       [
@@ -106,6 +80,5 @@ module Rubiks
         Hash.new.tap {|h| h[dim] = face_pt[dim] }
       end
     end
-
   end
 end

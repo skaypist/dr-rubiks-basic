@@ -7,7 +7,7 @@ module Rubiks
       @bases, @center_corner = bases, center_corner
     end
 
-    def build(geometric_cube, debug = false)
+    def build(geometric_cube)
       cubie_faces = cubie_face_factory.build(geometric_cube.points)
       Cubie.new(geometric_cube, cubie_faces)
     end

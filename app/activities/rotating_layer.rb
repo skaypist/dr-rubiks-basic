@@ -45,7 +45,6 @@ module RotatingLayer
         @drag_digest = drag.digest
       end
       @cached_on_cube = on_cube?(drag)
-      # puts @cached_on_cube.inspect
       return @cached_on_cube
     end
 
@@ -62,10 +61,6 @@ module RotatingLayer
 
       unless start_cubie && end_cubie && start_cubie != end_cubie
         @cached_on_cube = nil
-        # puts "incomplete"
-        # puts "drag_face_char:"
-        # puts drag_face_char
-        # puts "start: #{!!start_cubie} | end: #{!!end_cubie} | separate: #{start_cubie != end_cubie}"
         return nil
       end
 
@@ -76,10 +71,6 @@ module RotatingLayer
 
       @cached_on_cube = nil
       if !turn_layer.nil? && !turn_layer.none?
-        # start_cubie.faces.each { |face| puts face.inspect && face.color.darken!(0.8)}
-        # end_cubie.faces.each { |face| face.color.darken!(0.8)}
-        # puts "start_cubie #{start_cubie.inspect}"
-        # puts "end_cubie #{end_cubie.inspect}"
         puts "turny_layer found: that layer's center cubie characteristic"
         puts turn_layer.cubie_characteristic.inspect
       else
@@ -88,84 +79,14 @@ module RotatingLayer
       turn_layer
     end
 
-    # def turn!(drag)
-    #   return unless @cached_on_cube
-    #   char = @cached_on_cube.characteristic
-    #   drag_start = vec2(drag.x, drag.y)
-    #   puts char
-    #   start_pseudo_layer = outside_visible_cubies
-    #     .select { |cubie| cubie.face_characteristics.find { |fc| fc.id == char.id} }
-    #   puts "has #{start_pseudo_layer.count} cubies "
-    #   puts "pseudo layer colors:"
-    #   puts start_pseudo_layer.
-    #     flat_map { |cubie| cubie.outside_faces.flat_map { |f| f.color.name} }.
-    #     group_by { |v| v }.
-    #     sort_by { |_k, v| -v.count }.
-    #     map { |_k, v| v }.
-    #     first.
-    #     uniq
-    #   start_cubie = start_pseudo_layer.find do |cubie|
-    #     cubie.faces.
-    #       find { |face| face.characteristic == char }.
-    #       tap { |found_face| puts found_face.inspect }.
-    #       contains?(drag_start)
-    #   end
-    #
-    #   drag_end = vec2(drag.x2, drag.y2)
-    #   end_cubie = start_pseudo_layer.find do |cubie|
-    #     next if cubie == start_cubie
-    #     cubie.faces.
-    #       find { |face| face.characteristic == char }.
-    #       tap { |found_face| puts found_face.inspect }.
-    #       contains?(drag_end)
-    #   end
-    #
-    #   puts "start_cubie"
-    #   puts start_cubie.inspect
-    #   puts "end_cubie"
-    #   puts end_cubie.inspect
-    #   puts "checking characteristics"
-    #   puts start_cubie.face_characteristics
-    #   puts start_cubie.face_characteristics & end_cubie.face_characteristics
-    #   rotation_layer = (start_cubie.face_characteristics & end_cubie.face_characteristics) - [char]
-    #   puts "rotation_layer"
-    #   puts rotation_layer
-    #   puts "-----------------"
-    #
-    #   @cached_on_cube = nil
-    # end
-    #
-    # def outside_visible_cubies
-    #   characteristics_for_visible_faces = cube.nearest_cubie.face_characteristics
-    #   puts "characteristics_for_visible_faces"
-    #   puts characteristics_for_visible_faces
-    #   characteristics_for_visible_faces.flat_map do |char|
-    #     cube.cubies.select do |cubie|
-    #       cubie.face_characteristics.find { |fc| fc.id == char.id  }
-    #     end
-    #   end.uniq
-    # end
-
     def on_cube?(drag)
-      # puts "visible cube faces"
-      # puts cube_faces.cubie.visible_faces.map(&:characteristic)
-      # puts "#on_cube?"
-      # puts "  nearest corner of the cube"
-      # puts "  #{big_cubie.nearest_corner.round.inspect}"
-      touching = big_cubie.visible_faces.find { |bcf| bcf.contains?(vec2(drag.x, drag.y)) }
-      # if touching
-      #   puts "touching outside "
-      #   puts touching.color.name
-      # end
-      touching
+      big_cubie.visible_faces.find { |bcf| bcf.contains?(vec2(drag.x, drag.y)) }
     end
 
     def rotate_drag!(draggy)
       around = vec3(
-        # CUBE_SIZE*1.5*Math.acos(draggy[:x2] - draggy[:x]),
         draggy.y - draggy.y2,
         draggy.x2 - draggy.x,
-        # CUBE_SIZE*1.5*Math.acos(draggy[:y2] - draggy[:y])
         0
       )
 
@@ -216,7 +137,6 @@ module RotatingLayer
 
       (cube.farthest_cubies_first - cube.layers.actively_posed.to_a).
         each { |cubie| CubieRenderer.render(cubie) }
-      # CubieRenderer.render(big_cubie)
     end
 
     def cube_center

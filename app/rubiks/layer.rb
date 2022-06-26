@@ -35,8 +35,6 @@ module Rubiks
     def swap_stickers(sign)
       cloned_cubies = @edge_cubies.map(&:tclone)
       @edge_cubies.zip(cloned_cubies.rotate(-2*sign)).each do |(orig, copied)|
-        # shared_face_color = copied.outside_faces.find { |face| face.characteristic.key == characteristic.key }&.color&.clone
-        # orig.outside_faces.find { |face| face.characteristic.key == characteristic.key }&.color = shared_face_color if shared_face_color
         shared_face_color = copied.outside_faces.find { |face| face.characteristic.key == cubie_characteristic.key }&.color&.clone
         orig.outside_faces.find { |face| face.characteristic.key == cubie_characteristic.key }&.color = shared_face_color if shared_face_color
 
