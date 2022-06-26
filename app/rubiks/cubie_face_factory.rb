@@ -1,16 +1,27 @@
 module Rubiks
   class CubieFaceFactory
-    attr_reader :bases, :center_corner
+    attr_reader :bases, :center_corner, :cube_face_characteristics
 
-    def initialize(bases, center_corner)
-      @bases, @center_corner = bases, center_corner
-      characteristic_to_mapping
+    def initialize(full_cube_bases, center_corner, cube_face_characteristics)
+      @bases, @center_corner = full_cube_bases, center_corner
+      @cube_face_characteristics = cube_face_characteristics
+      # @@debugged = false
     end
 
     def build(cube_points)
+      # unless @@debugged
+      #   if debug
+      #     puts "characteristic_to_mapping:"
+      #     characteristic_to_mapping.each do |k, v|
+      #       puts "#{k} : #{v.name}"
+      #     end
+      #     @@debugged = true
+      #   end
+      # end
       build_polygons(cube_points).map do |polygon|
-        characteristic = cube_face_characteristic(polygon)
-        color = characteristic_to_mapping[characteristic] || Colors::BLACK
+        characteristic = CharacteristicRegistry.register(cube_face_characteristic(polygon))
+        # puts characteristic.value if debug
+        color = (characteristic_to_mapping[characteristic.value] || Colors::BLACK).clone
         CubieFace.new(polygon, color, characteristic)
       end
     end
@@ -43,17 +54,21 @@ module Rubiks
                                        .zip(face_colors)
                                        .to_h
     end
+    #
+    # def full_cube_bases
+    #   @cube_bases ||= bases
+    #     .product([-1, 2])
+    #     .map { |(base, sign)| base * sign }
+    # end
+    #
 
-    def cube_face_characteristics
-      bases
-        .product([-1, 2])
-        .map { |(base, sign)| base * sign }
-        .map do |signed_base|
-        face_pt = signed_base + center_corner
-        dim = signed_base.find { |_k, v| v != 0 }.first
-        Hash.new.tap {|h| h[dim] = face_pt[dim] }
-      end
-    end
+    # def cube_face_characteristics
+    #   bases.map do |signed_base|
+    #     face_pt = signed_base + center_corner
+    #     dim = signed_base.find { |_k, v| v != 0 }.first
+    #     Hash.new.tap {|h| h[dim] = face_pt[dim] }
+    #   end
+    # end
 
     def face_colors
       [
@@ -65,5 +80,32 @@ module Rubiks
         Colors::YELLOW
       ]
     end
+  end
+
+  class CubeFaceCharacteristicsFactory
+    attr_reader :cubie_bases, :center_corner
+
+    def initialize(cubie_bases, center_corner)
+      @cubie_bases, @center_corner = cubie_bases, center_corner
+    end
+
+    def build
+      cube_face_characteristics
+    end
+
+    def full_cube_bases
+      @full_cube_bases ||= cubie_bases
+                        .product([-1, 2])
+                        .map { |(base, sign)| base * sign }
+    end
+
+    def cube_face_characteristics
+      full_cube_bases.map do |signed_base|
+        face_pt = signed_base + center_corner
+        dim = signed_base.find { |_k, v| v != 0 }.first
+        Hash.new.tap {|h| h[dim] = face_pt[dim] }
+      end
+    end
+
   end
 end

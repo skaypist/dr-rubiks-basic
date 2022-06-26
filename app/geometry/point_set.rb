@@ -19,6 +19,21 @@ class PointSet
     end
   end
 
+  def translate(v)
+    ps = @points.map do |p|
+      p.translate(v)
+    end
+    self.class.new(*ps)
+  end
+
+  def *(num)
+    ps = map do |p|
+      p*num
+    end
+
+    self.class.new(*ps)
+  end
+
   def ==(point_set)
     (points - point_set.points).empty? &&
       (point_set.points - points).empty?

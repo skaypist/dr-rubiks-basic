@@ -17,8 +17,18 @@ class Colors
     self.class.new(vals, name)
   end
 
+  def darken!(proportion)
+    a = rgba[3]
+    rgba.map! { |v| v * proportion }
+    rgba[3] = a
+  end
+
   def inspect
     name
+  end
+
+  def clone
+    self.class.new(rgba.clone, name)
   end
 
 

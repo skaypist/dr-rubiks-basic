@@ -1,5 +1,5 @@
 module Rubiks
-  class LayersFactory
+  class LayersManagerFactory
     attr_reader :cubies, :bases, :center_corner
 
     def initialize(cubies, bases, center_corner)
@@ -9,117 +9,148 @@ module Rubiks
     end
 
     def center
+      # center for cube
+      # should be somewhere else
       (center_corner + bases.reduce(&:+)*0.5)
     end
 
     def build
-      Layers.new(calculate_layers(calculate_layer_characteristics), center)
+      tlayers = layers
+      raise "layers.count #{tlayers.count}" unless tlayers.count == 9
+      raise "layers cube count bad #{tlayers.find {|l| l.count != 9}.count}" unless tlayers.all? {|l| l.count == 9}
+      LayerManager.new(tlayers)
     end
 
-    def calculate_layer_characteristics
-      bases
+    def layer_characteristics
+      @layer_characteristics ||= bases
         .product([-1, 0, 1])
         .map { |(base, c)| (base * c) + center_corner }
         .map do |offset_base|
           offset_base.map { |k, v| Hash.new.tap { |h| h[k] = v } }
+            .map { |h| CharacteristicRegistry.register(h) }
         end.flatten(1).uniq
+      # cubies.flat_map(&:layer_characteristics).uniq
     end
 
-    def calculate_layers(layer_characteristics)
-      layers_hash = {}
-      layer_characteristics.each do |lc|
-        layers_hash[lc] = cubies.select do |cubie|
+    def layers
+      layer_characteristics.map do |lc|
+        layer_cubies = cubies.select do |cubie|
           cubie.layer_characteristics.include?(lc)
         end
+        LayerFactory.new(lc, center, layer_cubies).build
       end
-      layers_hash
     end
   end
 
-  class Layers
-    attr_reader :layer_hash
-    attr_accessor :actively_posed
-
-    def initialize(layer_hash, center)
-      @layer_hash = layer_hash.map do |k, v|
-        [k, Layer.new(v, k, center)]
-      end.to_h
-      @actively_posed = []
-    end
-
-    def get_layer(i)
-      @layer_hash[@layer_hash.keys[i]]
-    end
-
-    def rotate(i, angle)
-      @actively_posed = get_layer(i)
-      @actively_posed.transform.by = @actively_posed.transform.by + angle
-    end
-  end
-
-  class Layer
-    include ::Enumerable
+  class LayerFactory
     include MatrixFunctions
-    attr_reader :cubies, :transform, :characteristic
+    attr_reader :layer_center, :characteristic, :cubies, :cube_center
 
-    def initialize(cubies, characteristic, center)
+    def initialize(characteristic, cube_center, cubies)
       @characteristic = characteristic
+      @cube_center = cube_center
+      @layer_center = cube_center.merge(characteristic.value)
       @cubies = cubies
-      separate_edge_cubies!
-      sort_radially!
-      around_hash = vec3(*{x: 0, y:0, z: 0}.merge(characteristic).values)
-      around = normalize(vec3(around_hash[:x], around_hash[:y], around_hash[:z]))
-      @transform = ::Pose.new(
-        at: center,
-        around: around,
+    end
+
+    def build
+      # edge_cubies.each { |ec| puts ec.initial_center.round }
+      face_characteristics = edge_cubies.map(&:face_characteristics).reduce(&:|)
+      edge_face_characteristics = face_characteristics.reject do |face_characteristic|
+        face_characteristic.key == characteristic.key
+      end
+      outside_face_characteristic = face_characteristics.find do |face_characteristic|
+        face_characteristic.key == characteristic.key
+      end
+
+      cubie_characteristic = cubies.map(&:cubie_characteristic).reduce(&:&).first
+      puts "cubie characteristic"
+      puts "  #{cubie_characteristic.inspect}"
+      Layer.new(
+        edge_cubies: ordered_edge_cubies,
+        center_cubie: center_cubie,
+        pose: initial_pose,
+        cubie_characteristic: cubie_characteristic,
+        edge_face_characteristics: edge_face_characteristics,
+        outside_face_characteristic: outside_face_characteristic
+      )
+    end
+
+    def initial_pose
+      @initial_pose ||= ::Pose.new(
+        at: layer_center,
+        around: normalize(layer_center - cube_center),
         by: 0
       )
     end
 
-    def sort_radially!
-      layer_center = initial_layer_center
-      zero_degrees_3d = (@edge_cubies.first.initial_center.merge(characteristic) - layer_center)
-      zero_deg_2d_pairs = zero_degrees_3d.map.reject do |k, _v|
-        k == characteristic.keys.first
-      end.map do |(k, v)|
-        v
+    def edge_cubies
+      @edge_cubies ||= by_outside_face_count.first(8)
+    end
+
+    def center_cubie
+      @center_cubie ||= by_outside_face_count[8]
+    end
+
+    def by_outside_face_count
+      @by_outside_face_count = cubies.sort_by { |cubie| -1*cubie.outside_faces.count }
+    end
+
+    def ordered_edge_cubies
+      layer_center_2d = layer_center.except(characteristic.key).to_vec2
+      edge_cubies.sort_by do |cubie|
+        $gtk.args.geometry.angle_from(
+          # vec2(*(cubie.initial_center.except(characteristic.key).values)),
+          cubie.initial_center.to_h.except(characteristic.key).to_vec2,
+          layer_center_2d
+        ).round % 360
       end
-      zero_degrees = normalize(vec2(*zero_deg_2d_pairs))
-      @edge_cubies = @edge_cubies.sort_by do |cubie|
-        ray_3d = (cubie.initial_center.merge(characteristic) - layer_center)
-        ray_2d_pairs = ray_3d.map.reject do |k, _v|
-          k == characteristic.keys.first
-        end.sort.map do |(k, v)|
-          v
-        end
-        ray = vec2(*ray_2d_pairs)
-        $gtk.args.geometry.angle_to(zero_degrees, ray).round % 360
+    end
+  end
+
+  class LayerManager
+    attr_reader :layers
+    attr_accessor :actively_posed
+
+    def initialize(layers)
+      @layers = layers
+      @actively_posed = []
+    end
+
+    def actively_posed
+      @actively_posed || []
+    end
+
+    def get_layer(i)
+      @layers[i]
+    end
+
+    def by_outside_face_char(face_char)
+      layers.find do |layer|
+        layer.outside_face_characteristic == face_char
       end
     end
 
-    def initial_layer_center
-      (cubies.map{ |cubie| cubie.initial_center }.flatten(1).reduce(&:+) * 0.1111111).
-        merge(characteristic)
-    end
-
-    def each
-      @cubies.each { |cubie| yield cubie } if block_given?
-      @cubies.each
-    end
-
-    def separate_edge_cubies!
-      first, *rest = cubies.sort_by do |cubie|
-        (initial_layer_center - cubie.initial_center.merge(characteristic)).mag2
+    def by_cubies_and_face(cubies:, edge_face_char:)
+      layers.find do |layer|
+        matches_cubies = (layer.to_a & cubies).count == 2
+        matches_face = layer.edge_face_characteristics.include?(edge_face_char)
+        # puts " *****"
+        # puts "did not match layer with cubie_characteristic:"
+        # puts layer.cubie_characteristic.inspect
+        # puts "matches_cubies #{matches_cubies}  |   matches_face #{matches_face}"
+        # puts " *****"
+        matches_cubies && matches_face
       end
-      @edge_cubies = rest
-      @center_cubie = first
     end
 
-    def swap_stickers(sign)
-      cloned_cubies = @edge_cubies.map(&:tclone)
-      @edge_cubies.zip(cloned_cubies.rotate(2*sign)).each do |(orig, copied)|
-        orig.subsume(copied, characteristic)
-      end
+    # def by_characteristic(char)
+    #   @layers.find { |layer| layer.characteristic == char}
+    # end
+
+    def rotate(i, angle)
+      @actively_posed = get_layer(i)
+      @actively_posed.transform.by = @actively_posed.transform.by + angle
     end
   end
 end

@@ -22,6 +22,10 @@ class App
     )
   end
 
+  def debug_activity
+    @cube_debug_activity ||= CubeDebug::Activity.new
+  end
+
   def rotating_layer_activity
     @rotating_cubies_activity ||= RotatingLayer::Activity.new
   end

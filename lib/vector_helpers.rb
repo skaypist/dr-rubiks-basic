@@ -48,6 +48,10 @@ module VectorOps
     send(self.class.name.to_s.downcase, *coords)
   end
 
+  def to_h
+    map { |k, v| [k, v]}.to_h
+  end
+
   def mag2
     coordinates.map { |c| c**2 }.sum
   end
@@ -123,6 +127,10 @@ module VectorOps
       self.send("#{c}=".to_sym, cv) unless cv.nil?
     end
     self
+  end
+
+  def round
+    build(*coordinates.map(&:round))
   end
 
   define_method(:'*=') {|other| assign(self * other)}

@@ -1,15 +1,15 @@
 module Utils
-  def slice(keys, intersection: false)
+  def slice(keys, union: false)
     keys.inject({}) do |m,k|
-      m[k] = send(k) if (intersection || respond_to?(k))
+      m[k] = send(k) if (union || respond_to?(k))
       m
     end
   end
 
-  def assign(hash, intersection: false)
+  def assign(hash, union: false)
     hash.each do |k,v|
       m = "#{k}=".to_sym
-      send(m, v) if (intersection || respond_to?(m))
+      send(m, v) if (union || respond_to?(m))
     end
   end
 
@@ -53,5 +53,27 @@ module Utils
         new(*(kvs.keys)).
         new(*(kvs.values))
     end
+  end
+end
+
+class Hash
+  include MatrixFunctions
+
+  def except!(*keys)
+    keys.each { |key| delete(key) }
+    self
+  end
+
+  def except(*keys)
+    dup.except!(*keys)
+  end
+
+  def round
+    map {|k, v| [k, v.round]}.to_h
+  end
+
+  def to_vec2
+    fh = {x: 0, y:0, z: 0}.merge(self)
+    vec2(fh[:x], fh[:y])
   end
 end

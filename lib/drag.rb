@@ -14,6 +14,7 @@ module Dragging
         y: nil,
         x2: nil,
         y2: nil,
+        digest: nil,
         active: false,
         complete: false,
         modifier: nil,
@@ -44,6 +45,7 @@ module Dragging
       if !@current.active && (mouse.button_left || mouse.button_right)
         @current.x = mouse.x
         @current.y = mouse.y
+        @current.digest = mouse.x * mouse.y
         @current.active = true
         @current.complete = false
         @current.modifier = modifier
@@ -71,6 +73,7 @@ module Dragging
     def reset
       @current.x = nil
       @current.y = nil
+      @current.digest = nil
       @current.x2 = nil
       @current.y2 = nil
       @current.active = false

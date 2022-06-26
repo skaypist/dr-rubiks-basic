@@ -1,25 +1,26 @@
 class Poser
-  attr_reader :cube
+  attr_reader :cube, :big_cubie
 
-  def initialize(cube)
-    @cube = cube
-  end
-
-  def self.prepare(cube)
-    @@instance = new(cube)
-  end
-
-  def self.instance
-    @@instance
+  def initialize(cube, big_cubie)
+    @cube, @big_cubie = cube, big_cubie
   end
 
   def pose!
     pose_layer!
     pose_cube!
+    pose_big_cubie!
   end
 
   def collapse_pose!
     cube.collapse_pose!
+  end
+
+  def pose_big_cubie!
+    t = cube.transforms.first
+    t2 = cube.transforms.second
+    big_cubie.reset!
+    big_cubie.rotate(quaternion: t.quaternion, at: t.at)
+    big_cubie.rotate(quaternion: t2.quaternion, at: t2.at) if t2
   end
 
   def pose_cube!
@@ -75,11 +76,7 @@ class QuaternionPose
     by = 22.5
     q = Quaternion.from_vector(around: diagonal_axis, by: by)
 
-    center2 = (cube_corner + bases.slice(0,2).reduce(&:+)*0.5)
-    diagonal_axis2 = normalize(center2 - cube_corner)
-    by2 = 5.5
-    q2 = Quaternion.from_vector(around: diagonal_axis2, by: by2)
-    new(quaternion: q*q2, at: center)
+    new(quaternion: q, at: center)
   end
 
   def *(other)

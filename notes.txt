@@ -1,0 +1,18 @@
+touching cube face
+    - we know the cubie faces have to have that characteristic
+    - we know the cubies have to have that CubeFace characteristic on their faces
+
+we want the layer that has that characteristic on their edge faces
+
+z = 480
+
+
+edge -> center
+
+
+
+edge cubie face   -   y: 300
+center cubie face -   y: 300
+
+
+edge cubie
