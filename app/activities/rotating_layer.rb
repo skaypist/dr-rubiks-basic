@@ -90,11 +90,9 @@ module RotatingLayer
         0
       )
 
-      cube.second_transform = QuaternionPose.new(
-        quaternion: Quaternion.from_vector(
-          around: normalize(around),
-          by: around.mag2 / (3*CUBE_SIZE)
-        ),
+      cube.second_transform = QuaternionPose.build(
+        around: normalize(around),
+        by: around.mag2 / (3*CUBE_SIZE),
         at: cube_center,
       )
     end

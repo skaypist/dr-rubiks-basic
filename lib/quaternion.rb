@@ -14,8 +14,12 @@ class Quaternion
 
   attr_reader *%i[w x y z]
 
-  def initialize(w, x, y, z)
-    @w, @x, @y, @z = w, x, y, z
+  def initialize(*dim_args)
+    assign!(*dim_args)
+  end
+
+  def assign!(*comps)
+    @w, @x, @y, @z = *comps
   end
 
   def rotation_matrix

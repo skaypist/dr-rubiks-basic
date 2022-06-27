@@ -64,9 +64,11 @@ class Poser
 end
 
 class QuaternionPose
-  attr_accessor :at, :quaternion
-  def initialize(quaternion:, at: nil)
+  attr_accessor :at, :quaternion, :around, :by, :done
+  def initialize(quaternion:, by:, around:, at: nil)
     @at = at
+    @by = by
+    @around = around
     @quaternion = quaternion
   end
 
@@ -74,28 +76,34 @@ class QuaternionPose
     center = (cube_corner + bases.reduce(&:+)*0.5)
     diagonal_axis = normalize(center - cube_corner)
     by = 22.5
-    q = Quaternion.from_vector(around: diagonal_axis, by: by)
+    build(at: center, around: diagonal_axis, by: by)
+  end
 
-    new(quaternion: q, at: center)
+  def self.build(at:, around:, by: 0.0)
+    q = Quaternion.from_vector(around: around, by: by.to_f)
+    new(quaternion: q, at: at, by: by.to_f, around: around)
+  end
+
+  def calculate_quaternion
+    Quaternion.from_vector(around: around, by: by)
+  end
+
+  def by=(new_angle)
+    @by = new_angle
+    @quaternion.assign!(*(Quaternion.from_vector(around: around, by: by).components))
+    self
   end
 
   def *(other)
-    self.class.new(quaternion: quaternion * other.quaternion, at: other.at)
+    self.class.new(
+      quaternion: quaternion * other.quaternion,
+      at: other.at,
+      around: other.around,
+      by: other.by
+    )
   end
 
   def rotation_args
     {quaternion: quaternion, at: at}
-  end
-end
-
-class Pose
-  attr_accessor :around, :at, :by
-
-  def initialize(around:, at:, by:)
-    @around, @at, @by = around, at, by
-  end
-
-  def rotation_args
-    {around: around, at: at, by: by}
   end
 end

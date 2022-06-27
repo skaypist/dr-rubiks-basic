@@ -41,7 +41,7 @@ module Rubiks
     def initialize(characteristic, cube_center, cubies)
       @characteristic = characteristic
       @cube_center = cube_center
-      @layer_center = cube_center.merge(characteristic.value)
+      @layer_center = cube_center.merge(characteristic.value).to_vec3
       @cubies = cubies
     end
 
@@ -66,7 +66,7 @@ module Rubiks
     end
 
     def initial_pose
-      @initial_pose ||= ::Pose.new(
+      @initial_pose ||= ::QuaternionPose.build(
         at: layer_center,
         around: normalize(layer_center - cube_center),
         by: 0

@@ -75,4 +75,8 @@ class Hash
   def to_vec2
     vec2(*to_a.sort.map{|(_k,v)| v })
   end
+
+  def to_vec3
+    vec3(self[:x].to_f, self[:y].to_f, self[:z].to_f)
+  end
 end
