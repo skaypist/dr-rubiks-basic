@@ -38,7 +38,7 @@ module Rubiks
         shared_face_color = copied.outside_faces.find { |face| face.characteristic.key == cubie_characteristic.key }&.color&.clone
         orig.outside_faces.find { |face| face.characteristic.key == cubie_characteristic.key }&.color = shared_face_color if shared_face_color
 
-        off_key_swap = characteristic.off_keys.zip(characteristic.off_keys.reverse)
+        off_key_swap = cubie_characteristic.off_keys.zip(cubie_characteristic.off_keys.reverse)
         off_key_swap.each do |(source_key, dest_key)|
           next unless (complementary_face = copied.outside_faces.find { |face| face.characteristic.key == source_key })
           swap_face_color = complementary_face.color.clone

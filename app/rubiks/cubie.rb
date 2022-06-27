@@ -27,12 +27,13 @@ module Rubiks
     end
 
     def initial_center
-      @initial_center ||= (geometric_cube.initial.points.reduce(&:+) * 0.1666).round
+      @initial_center ||= (geometric_cube.initial.points.reduce(&:+) * 0.125).round
     end
 
     def outside_faces
       faces.select { |f| f.color.name != :black }
     end
+
     def tclone
       cloned_faces = faces.map do |face|
         CubieFace.new(face.points, face.color.clone, face.characteristic.clone)

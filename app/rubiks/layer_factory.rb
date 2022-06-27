@@ -34,7 +34,7 @@ module Rubiks
     def layers
       layer_characteristics.map do |lc|
         layer_cubies = cubies.select do |cubie|
-          cubie.layer_characteristics.include?(lc)
+          cubie.cubie_characteristic.include?(lc)
         end
         LayerFactory.new(lc, center, layer_cubies).build
       end

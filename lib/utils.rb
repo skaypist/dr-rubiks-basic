@@ -73,7 +73,6 @@ class Hash
   end
 
   def to_vec2
-    fh = {x: 0, y:0, z: 0}.merge(self)
-    vec2(fh[:x], fh[:y])
+    vec2(*to_a.sort.map{|(_k,v)| v })
   end
 end
