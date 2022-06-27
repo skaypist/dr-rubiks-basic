@@ -21,8 +21,8 @@ module Rubiks
     end
 
     def line_between(i, j)
-      geometric_face[i].to_h.except(:z).
-        merge(x2: geometric_face[j].x, y2: geometric_face[j].y)
+      points[i].to_h.except(:z).
+        merge(x2: points[j].x, y2: points[j].y)
     end
   end
 
@@ -35,11 +35,6 @@ module Rubiks
       @points = geometric_face.to_a
       @color = color
       @characteristic = characteristic
-    end
-
-    def geometric_face
-      # get rid of this and have the other thing depend on *points*
-      points
     end
 
     def inspect

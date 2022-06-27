@@ -15,24 +15,17 @@ module Rubiks
     end
 
     def build
-      tlayers = layers
-      raise "layers.count #{tlayers.count}" unless tlayers.count == 9
-      raise "layers cube count bad #{tlayers.find {|l| l.count != 9}.count}" unless tlayers.all? {|l| l.count == 9}
-      LayerManager.new(tlayers)
+      raise "layers.count #{layers.count}" unless layers.count == 9
+      raise "layers cube count bad #{layers.find {|l| l.count != 9}.count}" unless layers.all? {|l| l.count == 9}
+      LayerManager.new(layers)
     end
 
-    def layer_characteristics
-      @layer_characteristics ||= bases
-        .product([-1, 0, 1])
-        .map { |(base, c)| (base * c) + center_corner }
-        .map do |offset_base|
-          offset_base.map { |k, v| Hash.new.tap { |h| h[k] = v } }
-            .map { |h| CharacteristicRegistry.register(h) }
-        end.flatten(1).uniq
+    def all_layer_characteristics
+      @all_layer_characteristics ||= cubies.flat_map(&:cubie_characteristic).uniq
     end
 
     def layers
-      layer_characteristics.map do |lc|
+      @layers ||= all_layer_characteristics.map do |lc|
         layer_cubies = cubies.select do |cubie|
           cubie.cubie_characteristic.include?(lc)
         end
@@ -96,7 +89,6 @@ module Rubiks
       layer_center_2d = layer_center.except(characteristic.key).to_vec2
       edge_cubies.sort_by do |cubie|
         $gtk.args.geometry.angle_from(
-          # vec2(*(cubie.initial_center.except(characteristic.key).values)),
           cubie.initial_center.to_h.except(characteristic.key).to_vec2,
           layer_center_2d
         ).round % 360

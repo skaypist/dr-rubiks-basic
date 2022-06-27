@@ -1,9 +1,9 @@
 module Rubiks
   class CubieFaceFactory
-    attr_reader :bases, :center_corner, :cube_face_characteristics
+    attr_reader :center_corner, :cube_face_characteristics
 
-    def initialize(full_cube_bases, center_corner, cube_face_characteristics)
-      @bases, @center_corner = full_cube_bases, center_corner
+    def initialize(center_corner, cube_face_characteristics)
+      @center_corner = center_corner
       @cube_face_characteristics = cube_face_characteristics
     end
 

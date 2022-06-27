@@ -35,11 +35,11 @@ module Rubiks
     end
 
     def off_keys
-      %i[x y z] - value.keys
+      (%i[x y z] - value.keys).sort
     end
 
     def key
-      (value.keys & %i[x y z]).first
+      (value.keys & %i[x y z]).sort.first
     end
 
     def inspect

@@ -13,19 +13,11 @@ module Rubiks
     end
 
     def cubie_face_factory
-      @cubie_face_factory ||= CubieFaceFactory.new(full_cube_bases, center_corner, cube_face_characteristics)
-    end
-
-    def cube_face_characteristics_factory
-      @cube_face_characteristics_factory ||= CubeFaceCharacteristicsFactory.new(bases, center_corner)
-    end
-
-    def full_cube_bases
-      @full_cube_bases ||= cube_face_characteristics_factory.full_cube_bases
+      @cubie_face_factory ||= CubieFaceFactory.new(center_corner, cube_face_characteristics)
     end
 
     def cube_face_characteristics
-      @cube_face_characteristics ||= cube_face_characteristics_factory.build
+      @cube_face_characteristics ||= CubeFaceCharacteristicsFactory.new(bases, center_corner).build
     end
   end
 end

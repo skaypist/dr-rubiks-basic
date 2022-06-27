@@ -45,10 +45,10 @@ module Rubiks
     end
 
     def calculate_big_cubie
-      cube_corner = center_corner - bases.reduce(&:+)
-      cube_bases = bases.map { |b| b*3.0 }
+      cube_corner = (center_corner - bases.reduce(&:+)).round
+      cube_bases = bases.map { |b| (b*3.0).round }
       big_cube = Cubes::Factory.build(cube_corner , cube_bases)
-      CubieFactory.new(bases, center_corner).build(big_cube, true)
+      CubieFactory.new(bases, center_corner).build(big_cube)
     end
 
     def bases

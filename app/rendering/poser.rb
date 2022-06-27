@@ -95,13 +95,6 @@ class Pose
     @around, @at, @by = around, at, by
   end
 
-  def self.build_initial(bases, cube_corner)
-    center = (cube_corner + bases.reduce(&:+)*0.5)
-    diagonal_axis = normalize(center - cube_corner)
-    by = 22.5
-    new(around: diagonal_axis, at: center, by: by)
-  end
-
   def rotation_args
     {around: around, at: at, by: by}
   end

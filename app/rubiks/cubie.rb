@@ -41,17 +41,7 @@ module Rubiks
       self.class.new(geometric_cube, cloned_faces)
     end
 
-    def layer_characteristics
-      @layer_characteristics ||= geometric_cube.
-        initial.
-        min_by(&:mag2).
-        map { |k,v| {}.tap {|h| h[k] = v} }.
-        map { |h| CharacteristicRegistry.register(h) }
-    end
-
     def cubie_characteristic
-      @cubie_characteristic ||= initial_center.round.to_a.map { |(k,v)| [[k,v]].to_h}.
-        map { |h| CharacteristicRegistry.register(h) }
       @cubie_characteristic ||= initial_center.round.to_a.map { |(k,v)| [[k,v]].to_h}.
         map { |h| CharacteristicRegistry.register(h) }
     end
