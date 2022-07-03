@@ -72,13 +72,6 @@ class QuaternionPose
     @quaternion = quaternion
   end
 
-  def self.build_initial(bases, cube_corner)
-    center = (cube_corner + bases.reduce(&:+)*0.5)
-    diagonal_axis = normalize(center - cube_corner)
-    by = 22.5
-    build(at: center, around: diagonal_axis, by: by)
-  end
-
   def self.build(at:, around:, by: 0.0)
     q = Quaternion.from_vector(around: around, by: by.to_f)
     new(quaternion: q, at: at, by: by.to_f, around: around)

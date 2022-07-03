@@ -1,9 +1,8 @@
 module Rubiks
   class CubieFaceFactory
-    attr_reader :center_corner, :cube_face_characteristics
+    attr_reader :cube_face_characteristics
 
-    def initialize(center_corner, cube_face_characteristics)
-      @center_corner = center_corner
+    def initialize(cube_face_characteristics)
       @cube_face_characteristics = cube_face_characteristics
     end
 
@@ -57,25 +56,19 @@ module Rubiks
   end
 
   class CubeFaceCharacteristicsFactory
-    attr_reader :cubie_bases, :center_corner
-
-    def initialize(cubie_bases, center_corner)
-      @cubie_bases, @center_corner = cubie_bases, center_corner
-    end
-
     def build
       cube_face_characteristics
     end
 
     def full_cube_bases
-      @full_cube_bases ||= cubie_bases
+      @full_cube_bases ||= Config.bases
                         .product([-1, 2])
                         .map { |(base, sign)| base * sign }
     end
 
     def cube_face_characteristics
       full_cube_bases.map do |signed_base|
-        face_pt = signed_base + center_corner
+        face_pt = signed_base + Config.center_corner
         dim = signed_base.find { |_k, v| v != 0 }.first
         Hash.new.tap {|h| h[dim] = face_pt[dim] }
       end

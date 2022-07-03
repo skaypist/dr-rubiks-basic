@@ -1,47 +1,12 @@
 module Rubiks
-  class LayersManagerFactory
-    attr_reader :cubies, :bases, :center_corner
-
-    def initialize(cubies, bases, center_corner)
-      @cubies = cubies
-      @center_corner = center_corner
-      @bases = bases
-    end
-
-    def center
-      # center for cube
-      # should be somewhere else
-      (center_corner + bases.reduce(&:+)*0.5)
-    end
-
-    def build
-      raise "layers.count #{layers.count}" unless layers.count == 9
-      raise "layers cube count bad #{layers.find {|l| l.count != 9}.count}" unless layers.all? {|l| l.count == 9}
-      LayerManager.new(layers)
-    end
-
-    def all_layer_characteristics
-      @all_layer_characteristics ||= cubies.flat_map(&:cubie_characteristic).uniq
-    end
-
-    def layers
-      @layers ||= all_layer_characteristics.map do |lc|
-        layer_cubies = cubies.select do |cubie|
-          cubie.cubie_characteristic.include?(lc)
-        end
-        LayerFactory.new(lc, center, layer_cubies).build
-      end
-    end
-  end
-
-  class LayerFactory
+  class LayerFactoryyy
     include MatrixFunctions
-    attr_reader :layer_center, :characteristic, :cubies, :cube_center
 
-    def initialize(characteristic, cube_center, cubies)
+    attr_reader :layer_center, :characteristic, :cubies
+
+    def initialize(characteristic, cubies)
       @characteristic = characteristic
-      @cube_center = cube_center
-      @layer_center = cube_center.merge(characteristic.value).to_vec3
+      @layer_center = Config.center.merge(characteristic.value).to_vec3
       @cubies = cubies
     end
 
@@ -68,7 +33,7 @@ module Rubiks
     def initial_pose
       @initial_pose ||= ::QuaternionPose.build(
         at: layer_center,
-        around: normalize(layer_center - cube_center),
+        around: normalize(layer_center - Config.center),
         by: 0
       )
     end
@@ -82,7 +47,7 @@ module Rubiks
     end
 
     def by_outside_face_count
-      @by_outside_face_count = cubies.sort_by { |cubie| -1*cubie.outside_faces.count }
+      @by_outside_face_count ||= cubies.sort_by { |cubie| -1*cubie.outside_faces.count }
     end
 
     def ordered_edge_cubies
@@ -93,43 +58,6 @@ module Rubiks
           layer_center_2d
         ).round % 360
       end
-    end
-  end
-
-  class LayerManager
-    attr_reader :layers
-    attr_accessor :actively_posed
-
-    def initialize(layers)
-      @layers = layers
-      @actively_posed = []
-    end
-
-    def actively_posed
-      @actively_posed || []
-    end
-
-    def get_layer(i)
-      @layers[i]
-    end
-
-    def by_outside_face_char(face_char)
-      layers.find do |layer|
-        layer.outside_face_characteristic == face_char
-      end
-    end
-
-    def by_cubies_and_face(cubies:, edge_face_char:)
-      layers.find do |layer|
-        matches_cubies = (layer.to_a & cubies).count == 2
-        matches_face = layer.edge_face_characteristics.include?(edge_face_char)
-        matches_cubies && matches_face
-      end
-    end
-
-    def rotate(i, angle)
-      @actively_posed = get_layer(i)
-      @actively_posed.transform.by = @actively_posed.transform.by + angle
     end
   end
 end

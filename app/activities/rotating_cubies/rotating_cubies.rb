@@ -11,7 +11,7 @@ module RotatingCubies
     end
 
     def cube
-      @cube ||= Rubiks::Factory.new(cube_corner, cube_size).build
+      @cube ||= Rubiks::Factory.new.build
     end
 
     def rotate_cube!

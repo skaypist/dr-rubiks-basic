@@ -2,16 +2,15 @@ module Rubiks
   class Factory
     include MatrixFunctions
 
-    attr_reader :center_corner, :block_size
-    def initialize(center_corner, block_size)
-      @center_corner, @block_size = center_corner, block_size
-    end
-
     def build
       cubies = build_cubies
       layers = layers(cubies)
-      initial_transform = QuaternionPose.build_initial(bases, center_corner)
       Cube.new(cubies, layers, initial_transform)
+    end
+
+    def initial_transform
+      diagonal_axis = normalize(Config.center - Config.center_corner)
+      QuaternionPose.build(at: Config.center, around: diagonal_axis, by: 22.5)
     end
 
     def build_cubies
@@ -22,21 +21,21 @@ module Rubiks
     end
 
     def cubie_factory
-      @_cubie_factory ||= CubieFactory.new(bases, center_corner)
+      @_cubie_factory ||= CubieFactory.new
     end
 
     def layers(cubies)
-      LayersManagerFactory.new(cubies, bases, center_corner).build
+      LayersFactory.new(cubies).build
     end
 
     def build_geometric_cubes
       (1..3).to_a.map do |dim_count|
-        bases
+        Config.bases
           .product([-1, 1])
           .map { |d, c| d*c }
           .combination(dim_count)
-          .map {|combo| combo.reduce(center_corner, &:+) }
-          .map {|block_corner| Cubes::Factory.build(block_corner, bases) }
+          .map {|combo| combo.reduce(Config.center_corner, &:+) }
+          .map {|block_corner| Cubes::Factory.build(block_corner, Config.bases) }
       end.flatten(1).uniq { |c| c.initial.sort_by(&:mag2) }
     end
 
@@ -45,18 +44,10 @@ module Rubiks
     end
 
     def calculate_big_cubie
-      cube_corner = (center_corner - bases.reduce(&:+)).round
-      cube_bases = bases.map { |b| (b*3.0).round }
-      big_cube = Cubes::Factory.build(cube_corner , cube_bases)
-      CubieFactory.new(bases, center_corner).build(big_cube)
-    end
-
-    def bases
-      @bases ||= [
-        vec3(block_size,0,0),
-        vec3(0,block_size,0),
-        vec3(0,0,block_size)
-      ]
+      cube_corner = (Config.center_corner - Config.bases.reduce(&:+)).round
+      cube_bases = Config.bases.map { |b| (b*3.0).round }
+      big_cube = Cubes::Factory.build(cube_corner, cube_bases)
+      CubieFactory.new.build(big_cube)
     end
   end
 end

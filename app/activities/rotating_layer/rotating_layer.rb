@@ -17,7 +17,7 @@ module RotatingLayer
     end
 
     def rubiks_cube_factory
-      @_rubiks_cube_factory ||= Rubiks::Factory.new(cube_corner, cube_size)
+      @_rubiks_cube_factory ||= Rubiks::Factory.new
     end
 
     def poser
