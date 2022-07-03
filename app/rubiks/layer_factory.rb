@@ -1,5 +1,5 @@
 module Rubiks
-  class LayerFactoryyy
+  class LayerFactory
     include MatrixFunctions
 
     attr_reader :layer_center, :characteristic, :cubies

@@ -21,7 +21,7 @@ module Rubiks
         layer_cubies = cubies.select do |cubie|
           cubie.cubie_characteristic.include?(lc)
         end
-        LayerFactoryyy.new(lc, layer_cubies).build
+        LayerFactory.new(lc, layer_cubies).build
       end
     end
   end
