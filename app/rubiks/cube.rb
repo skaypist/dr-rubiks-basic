@@ -1,13 +1,18 @@
 module Rubiks
   class Cube
+    include ::Posing::Rotatable
     attr_reader :cubies, :layers, :transforms
 
     def initialize(cubies, layers, initial_transform, faces: [])
-      @cubies = cubies
+      @cubies = Cubies.new(cubies)
       @layers = layers
       @transforms = []
       @transforms << initial_transform
       @faces = faces
+    end
+
+    def center
+      Config.center
     end
 
     def farthest_cubies_first

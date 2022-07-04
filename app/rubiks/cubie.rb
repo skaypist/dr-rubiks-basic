@@ -1,6 +1,7 @@
 module Rubiks
   class Cubie
     include MatrixFunctions
+    include ::Posing::Rotatable
 
     attr_accessor :geometric_cube, :faces
 
@@ -22,12 +23,24 @@ module Rubiks
       geometric_cube.rotate(**opts)
     end
 
+    def cubies
+      [self]
+    end
+
+    def points
+      geometric_cube.points
+    end
+
     def reset!
       geometric_cube.reset!
     end
 
     def initial_center
       @initial_center ||= (geometric_cube.initial.points.reduce(&:+) * 0.125).round
+    end
+
+    def center
+      geometric_cube.points.reduce(&:+) * 0.125
     end
 
     def outside_faces
