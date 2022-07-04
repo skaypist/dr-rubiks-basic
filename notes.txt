@@ -1,2 +1,10 @@
+
+
+**Addressed:**
+
 quaternions instead of angle
+  - pretty much done. still some messiness
 no initials once we have quaternions
+    - free rotation of the cube would kindof suck
+    - we'd need to keep an initial there for it to not suck
+        - or just keep calculating deltas, but that would probably suck as far as numerical drift

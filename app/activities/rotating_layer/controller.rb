@@ -8,9 +8,10 @@ module RotatingLayer
     end
 
     def on_tick(_args)
-      @activity.toggle_rotation! if space_bar?(_args)
-      @activity.add_cubes! if right_clicked?
-      @activity.remove_cubes! if left_clicked?
+      click
+      # @activity.toggle_rotation! if space_bar?(_args)
+      # @activity.add_cubes! if right_clicked?
+      # @activity.remove_cubes! if left_clicked?
       @activity.drag!(drag) if drag_active?
       @activity.collapse_pose! if drag_complete?
       @activity.turn!(drag) if drag_complete?

@@ -1,9 +1,8 @@
 module Rubiks
   class Layer
-    include ::Enumerable
+    include Enumerable
     include MatrixFunctions
     attr_reader :cubies, :transform, :cubie_characteristic, :edge_face_characteristics, :outside_face_characteristic
-    attr_reader :edge_cubies, :center_cubie
     def initialize(
       edge_cubies:,
       center_cubie:,
@@ -20,7 +19,11 @@ module Rubiks
     end
 
     def each
-      @cubies.each { |cubie| yield cubie } if block_given?
+      if block_given?
+        @cubies.each { |cubie| yield cubie }
+        return
+      end
+
       @cubies.each
     end
 
@@ -30,6 +33,14 @@ module Rubiks
           find { |face| face.characteristic == face_char }.
           contains?(coordinates)
       end
+    end
+
+    def center
+      center_cubie.center
+    end
+
+    def axis
+      center - Config.center
     end
 
     def swap_stickers(sign)
@@ -46,5 +57,7 @@ module Rubiks
         end
       end
     end
+
+    attr_reader :edge_cubies, :center_cubie
   end
 end

@@ -9,27 +9,8 @@ module RotatingLayer
       # rotate_layer! unless rotation_paused?
       # rotate_cube! unless rotation_paused?
       poser.pose!
+      cube_poser.apply_pose!
       load_cube_primitives
-    end
-
-    def cube
-      @cube ||= rubiks_cube_factory.build
-    end
-
-    def rubiks_cube_factory
-      @_rubiks_cube_factory ||= Rubiks::Factory.new
-    end
-
-    def poser
-      @poser ||= Poser.new(cube, big_cubie)
-    end
-
-    def big_cubie
-      @big_cubie ||= rubiks_cube_factory.big_cubie
-    end
-
-    def collapse_pose!
-      poser.collapse_pose!
     end
 
     def drag!(draggy)
@@ -84,50 +65,26 @@ module RotatingLayer
     end
 
     def rotate_drag!(draggy)
-      around = vec3(
-        draggy.y - draggy.y2,
-        draggy.x2 - draggy.x,
-        0
-      )
-
-      cube.second_transform = QuaternionPose.build(
-        around: normalize(around),
-        by: around.mag2 / (3*CUBE_SIZE),
-        at: cube_center,
-      )
+      cube_poser.rotate_drag(draggy)
     end
 
-    def rotate_cube!
-      cube.transforms.first.by = cube.transforms.first.by + 3
+    def collapse_pose!
+      cube_poser.collapse_pose!
     end
 
-    def rotate_layer!
-      cube.layers.rotate(5, 3)
-    end
-
-    def layer_axis
-      normalize(vec3(0, 180, 0))
-    end
-
-    def rotation_paused?
-      @_rotation_paused ||= false
-    end
-
-    def toggle_rotation!
-      @_rotation_paused = !rotation_paused?
-    end
-
-    def add_cubes!
-      @_num_cubes = [num_cubes + 1, 27].min
-    end
-
-    def remove_cubes!
-      @_num_cubes = [num_cubes - 1, 0].max
-    end
-
-    def num_cubes
-      @_num_cubes ||= 27
-    end
+    # def rotate_drag!(draggy)
+    #   around = vec3(
+    #     draggy.y - draggy.y2,
+    #     draggy.x2 - draggy.x,
+    #     0
+    #   )
+    #
+    #   cube.second_transform = Posing::QuaternionPose.build(
+    #     around: normalize(around),
+    #     by: around.mag2 / (3*Config.block_size),
+    #     at: Config.center,
+    #   )
+    # end
 
     def load_cube_primitives
       cube.layers.actively_posed.sort_by {|c| c.nearest_corner.z }.
@@ -137,16 +94,24 @@ module RotatingLayer
         each { |cubie| CubieRenderer.render(cubie) }
     end
 
-    def cube_center
-      (cube_corner + vec3(cube_size/2, cube_size/2, cube_size/2))
+    def cube
+      @cube ||= rubiks_cube_factory.build
     end
 
-    def cube_size
-      CUBE_SIZE
+    def rubiks_cube_factory
+      @_rubiks_cube_factory ||= Rubiks::Factory.new
     end
 
-    def cube_corner
-      vec3(*CENTER_COORDINATES)
+    def poser
+      @poser ||= Posing::Poser.new(cube, big_cubie)
+    end
+
+    def cube_poser
+      @cube_poser ||= Posing::CubePoser.new(cube, big_cubie)
+    end
+
+    def big_cubie
+      @big_cubie ||= rubiks_cube_factory.big_cubie
     end
   end
 end

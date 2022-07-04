@@ -8,8 +8,8 @@ module Posing
 
     def pose!
       pose_layer!
-      pose_cube!
-      pose_big_cubie!
+      # pose_cube!
+      # pose_big_cubie!
     end
 
     def collapse_pose!
