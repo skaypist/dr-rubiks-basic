@@ -31,7 +31,7 @@ module Rubiks
     end
 
     def initial_pose
-      @initial_pose ||= ::QuaternionPose.build(
+      @initial_pose ||= ::Posing::QuaternionPose.build(
         at: layer_center,
         around: normalize(layer_center - Config.center),
         by: 0

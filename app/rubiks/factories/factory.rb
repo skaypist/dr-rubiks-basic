@@ -5,12 +5,13 @@ module Rubiks
     def build
       cubies = build_cubies
       layers = layers(cubies)
-      Cube.new(cubies, layers, initial_transform)
+      Cube.new(cubies, layers, initial_pose)
     end
 
-    def initial_transform
+    # aim to get rid of this
+    def initial_pose
       diagonal_axis = normalize(Config.center - Config.center_corner)
-      QuaternionPose.build(at: Config.center, around: diagonal_axis, by: 22.5)
+      Posing::QuaternionPose.build(at: Config.center, around: diagonal_axis, by: 22.5)
     end
 
     def build_cubies
