@@ -67,6 +67,10 @@ module VectorOps
     self
   end
 
+  def abs
+    build(*coordinates.map(&:abs))
+  end
+
   def round
     build(*coordinates.map(&:round))
   end

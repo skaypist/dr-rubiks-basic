@@ -5,8 +5,8 @@ module Posing
     # let us aim to keep mutating externals out of here.
     # maybe we can facilitate it with this, but not hide it as a hidden side effect
 
-    def initialize(cube, big_cubie)
-      @cube, @big_cubie = cube, big_cubie
+    def initialize(cube)
+      @cube = cube
     end
 
     def rotate_drag(draggy)
@@ -44,7 +44,11 @@ module Posing
     end
 
     def poseables
-      @poseables ||= [@cube, @big_cubie]
+      @poseables ||= [@cube, big_cubie]
+    end
+
+    def big_cubie
+      @big_cubie ||= @cube.big_cubie
     end
 
     def reference_q

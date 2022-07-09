@@ -8,10 +8,7 @@ module RotatingLayer
     end
 
     def on_tick(_args)
-      click
-      # @activity.toggle_rotation! if space_bar?(_args)
-      # @activity.add_cubes! if right_clicked?
-      # @activity.remove_cubes! if left_clicked?
+      refresh_drag_apparently!
       @activity.drag!(drag) if drag_active?
       @activity.collapse_pose! if drag_complete?
       @activity.turn!(drag) if drag_complete?
@@ -31,21 +28,8 @@ module RotatingLayer
       drag_provider.drag_present? && drag_provider.complete?
     end
 
-    def click
-      # we should be asking a click provider
+    def refresh_drag_apparently!
       drag_provider.current if drag_provider.complete?
-    end
-
-    def right_clicked?
-      click && click.btn == :right
-    end
-
-    def left_clicked?
-      click && click.btn == :left
-    end
-
-    def space_bar?(args)
-      args.inputs.keyboard.key_up.space
     end
   end
 end

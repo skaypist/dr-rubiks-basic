@@ -23,18 +23,9 @@ module Rubiks
       Layer.new(
         edge_cubies: ordered_edge_cubies,
         center_cubie: center_cubie,
-        pose: initial_pose,
         cubie_characteristic: cubie_characteristic,
         edge_face_characteristics: edge_face_characteristics,
         outside_face_characteristic: outside_face_characteristic
-      )
-    end
-
-    def initial_pose
-      @initial_pose ||= ::Posing::QuaternionPose.build(
-        at: layer_center,
-        around: normalize(layer_center - Config.center),
-        by: 0
       )
     end
 

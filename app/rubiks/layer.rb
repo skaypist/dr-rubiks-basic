@@ -2,19 +2,21 @@ module Rubiks
   class Layer
     include Enumerable
     include MatrixFunctions
-    attr_reader :cubies, :transform, :cubie_characteristic, :edge_face_characteristics, :outside_face_characteristic
+    include ::Posing::Rotatable
+
+    attr_reader :cubies, :cubie_characteristic, :edge_face_characteristics, :outside_face_characteristic
     def initialize(
       edge_cubies:,
       center_cubie:,
-      pose:,
       cubie_characteristic:,
       edge_face_characteristics:,
       outside_face_characteristic:
     )
-      @edge_cubies, @center_cubie, @transform, @cubie_characteristic =
-        edge_cubies, center_cubie, pose, cubie_characteristic
+      @edge_cubies, @center_cubie, @cubie_characteristic =
+        edge_cubies, center_cubie, cubie_characteristic
       @edge_face_characteristics = edge_face_characteristics
       @outside_face_characteristic = outside_face_characteristic
+      puts outside_face_characteristic.inspect
       @cubies = @edge_cubies + [center_cubie]
     end
 
@@ -40,7 +42,15 @@ module Rubiks
     end
 
     def axis
-      center - Config.center
+      @external_cubie_face ||= calculate_external_cubie_face
+      @external_cubie_face.center - center
+    end
+
+    def calculate_external_cubie_face
+      outside_face_characteristic_keys = @edge_face_characteristics.map(&:key)
+      center_cubie.faces.find do |face|
+        !outside_face_characteristic_keys.include?(face.characteristic.key)
+      end
     end
 
     def swap_stickers(sign)

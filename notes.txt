@@ -1,3 +1,8 @@
+Currently:
+
+moving stuff into Poseables, Posers
+they probably need their own controller
+    - that controller should probably
 
 
 **Addressed:**

@@ -9,9 +9,5 @@ module Posing
         )
       end
     end
-
-    def build_inert_pose
-      QuaternionPose.build(at: center, around: axis)
-    end
   end
 end

@@ -43,5 +43,9 @@ module Rubiks
         color: color.name,
       }.to_s
     end
+
+    def center
+      points.reduce(&:+)*0.25
+    end
   end
 end
