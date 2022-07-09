@@ -2,10 +2,20 @@ module Posing
   module Rotatable
     def rotate!(quaternion)
       mat = quaternion.rotation_matrix
-      cubies.flat_map(&:points).each do |point|
+      current_center = center
+
+
+      (cubies.to_a - [center_cubie].compact).flat_map(&:points).each do |point|
         point.assign(
-          (point.translate(center * -1) * mat).
-            translate(center)
+          (point.translate(current_center * -1) * mat).
+            translate(current_center)
+        )
+      end
+
+      [center_cubie].compact.flat_map(&:points).each do |point|
+        point.assign(
+          (point.translate(current_center * -1) * mat).
+            translate(current_center)
         )
       end
     end

@@ -9,6 +9,12 @@ module Rubiks
       @big_cubie = big_cubie
     end
 
+    def center_cubie
+      @center_cubie ||= cubies.min_by do |cubie|
+        (cubie.center - center).mag2
+      end
+    end
+
     def center
       Config.center
     end

@@ -23,6 +23,10 @@ module Rubiks
       geometric_cube.rotate(**opts)
     end
 
+    def center_cubie
+      nil
+    end
+
     def cubies
       [self]
     end
