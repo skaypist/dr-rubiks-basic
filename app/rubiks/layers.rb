@@ -19,5 +19,11 @@ module Rubiks
         matches_cubies && matches_face
       end
     end
+
+    def by_characteristic(key)
+      layers.
+        select { |layer| layer.cubie_characteristic.key == key }.
+        sort_by { |layer| layer.center_cubie.center.z }
+    end
   end
 end

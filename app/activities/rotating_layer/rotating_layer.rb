@@ -60,11 +60,17 @@ module RotatingLayer
     end
 
     def load_cube_primitives
-      (cube.farthest_cubies_first - actively_posed_layer_cubies.to_a).
-        each { |cubie| CubieRenderer.render(cubie) }
-
-      actively_posed_layer_cubies.sort_by {|c| c.nearest_corner.z }.
-        each { |cubie| CubieRenderer.render(cubie) }
+      if layer_poser.actively_posed?
+        cube.layers.
+          by_characteristic(layer_poser.layer.cubie_characteristic.key).
+          each do |layer|
+          layer.farthest_cubies_first.
+            each { |cubie| CubieRenderer.render(cubie) }
+        end
+      else
+        cube.farthest_cubies_first.
+          each { |cubie| CubieRenderer.render(cubie) }
+      end
     end
 
     def cube

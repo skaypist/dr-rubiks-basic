@@ -20,6 +20,10 @@ module Rubiks
       @cubies = @edge_cubies + [center_cubie]
     end
 
+    def farthest_cubies_first
+      sort_by {|c| c.nearest_corner.z }
+    end
+
     def each
       if block_given?
         @cubies.each { |cubie| yield cubie }
