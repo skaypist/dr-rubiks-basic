@@ -10,7 +10,7 @@ class CubieRenderer
   end
 
   def render
-    cubie.visible_faces.each do |face|
+    cubie.nearest_faces.each do |face|
       render_face(face)
     end
   end

@@ -10,7 +10,7 @@ module Rubiks
       @faces = cubie_faces
     end
 
-    def visible_faces
+    def nearest_faces
       current_nearest_corner = nearest_corner
       faces.select { |f| f.points.find { |fp| fp.eql? current_nearest_corner } }
     end

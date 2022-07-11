@@ -2,9 +2,6 @@ module Posing
   class CubePoser
     include MatrixFunctions
 
-    # let us aim to keep mutating externals out of here.
-    # maybe we can facilitate it with this, but not hide it as a hidden side effect
-
     def initialize(cube)
       @cube = cube
     end

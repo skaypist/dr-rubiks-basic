@@ -47,16 +47,24 @@ module RotatingLayer
 
       @cached_on_cube = nil
       if !turn_layer.nil? && !turn_layer.none?
-        puts "turny_layer found: that layer's center cubie characteristic"
-        puts turn_layer.cubie_characteristic.inspect
-        being_turning!(turn_layer)
-      else
-        puts "no turny layer found"
+        turn_direction = calculate_turn_direction(turn_layer, start_cubie, end_cubie)
+        begin_turning!(turn_layer, turn_direction)
       end
     end
 
+    def calculate_turn_direction(turn_layer, start_cubie, end_cubie)
+      ray1 = normalize(start_cubie.center - turn_layer.center_cubie.center)
+      ray2 = normalize(end_cubie.center - turn_layer.center_cubie.center)
+      perp = normalize(cross(ray1, ray2))
+      dot(perp, turn_layer.axis).round
+    end
+
+    def begin_turning!(turn_layer, turn_direction)
+      @layer_poser = Posing::LayerPoser.new(turn_layer, turn_direction)
+    end
+
     def on_cube?(drag)
-      big_cubie.visible_faces.find { |bcf| bcf.contains?(vec2(drag.x, drag.y)) }
+      big_cubie.nearest_faces.find { |bcf| bcf.contains?(vec2(drag.x, drag.y)) }
     end
 
     def load_cube_primitives
@@ -91,10 +99,6 @@ module RotatingLayer
 
     def actively_posed_layer_cubies
       layer_poser.layer || []
-    end
-
-    def being_turning!(turn_layer)
-      @layer_poser = Posing::LayerPoser.new(turn_layer)
     end
 
     def cube_poser

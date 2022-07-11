@@ -1,10 +1,13 @@
 module Posing
   class LayerPoser
-    attr_reader :layer, :angle_progress
+    attr_reader :layer, :angle_progress, :turn_direction
+    attr_reader :big_cubie
 
-    def initialize(layer = nil)
+    def initialize(layer = nil, turn_direction = -1)
       @layer = layer
+      @turn_direction = turn_direction
       @angle_progress = 0
+      @big_cubie = big_cubie
     end
 
     def quaternion
@@ -13,12 +16,12 @@ module Posing
 
     def apply_pose!
       return unless actively_posed?
-      @angle_progress += 3.0
+      @angle_progress += (9.0 * turn_direction)
       unless turn_complete?
         current_q = quaternion
         layer.rotate!(current_q)
       else
-        layer.swap_stickers((angle_progress / angle_progress.abs).round)
+        layer.swap_stickers(turn_direction)
         deactivate_pose!
       end
     end

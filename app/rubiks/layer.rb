@@ -5,19 +5,24 @@ module Rubiks
     include ::Posing::Rotatable
 
     attr_reader :cubies, :cubie_characteristic, :edge_face_characteristics, :outside_face_characteristic
+    attr_reader :rotation_face
+    attr_reader :edge_cubies, :center_cubie
+
     def initialize(
       edge_cubies:,
       center_cubie:,
       cubie_characteristic:,
       edge_face_characteristics:,
-      outside_face_characteristic:
+      outside_face_characteristic:,
+      rotation_face:
     )
       @edge_cubies, @center_cubie, @cubie_characteristic =
         edge_cubies, center_cubie, cubie_characteristic
       @edge_face_characteristics = edge_face_characteristics
       @outside_face_characteristic = outside_face_characteristic
-      puts outside_face_characteristic.inspect
+      @rotation_face = rotation_face
       @cubies = @edge_cubies + [center_cubie]
+      axis
     end
 
     def farthest_cubies_first
@@ -46,15 +51,9 @@ module Rubiks
     end
 
     def axis
-      @external_cubie_face ||= calculate_external_cubie_face
-      @external_cubie_face.center - center
-    end
-
-    def calculate_external_cubie_face
-      outside_face_characteristic_keys = @edge_face_characteristics.map(&:key)
-      center_cubie.faces.find do |face|
-        !outside_face_characteristic_keys.include?(face.characteristic.key)
-      end
+      external = rotation_face.center
+      internal = center
+      normalize(external - internal)
     end
 
     def swap_stickers(sign)
@@ -71,7 +70,5 @@ module Rubiks
         end
       end
     end
-
-    attr_reader :edge_cubies, :center_cubie
   end
 end

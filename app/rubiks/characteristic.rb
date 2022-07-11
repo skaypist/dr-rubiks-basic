@@ -18,11 +18,17 @@ module Rubiks
     end
 
     def register(value)
-      return @registered_h[value] if @registered_h[value]
-      built = Characteristic.new(next_id, value)
-      @registered_h[value] = built
+      formatted_val = formatted(value)
+      return @registered_h[formatted_val] if @registered_h[formatted_val]
+      built = Characteristic.new(next_id, formatted(formatted_val))
+      @registered_h[formatted_val] = built
       @registered_ary << built
       return built
+    end
+
+    def formatted val
+      val.transform_values! { |v| v.to_f }
+      val
     end
   end
 

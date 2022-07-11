@@ -25,8 +25,24 @@ module Rubiks
         center_cubie: center_cubie,
         cubie_characteristic: cubie_characteristic,
         edge_face_characteristics: edge_face_characteristics,
-        outside_face_characteristic: outside_face_characteristic
+        outside_face_characteristic: outside_face_characteristic,
+        rotation_face: rotation_face
       )
+    end
+
+    def rotation_face
+      canonical_point = center_cubie.geometric_cube.points.max_by do |point|
+        distance(point, vec3(0, 3000, -3000))
+        # with deep apologies to self and anyone else who reads this.
+        # anyways this apparently works. change to, like vec3(0,0,0), then try and
+        # rotate layers, and some will rotate wrong. I couldn't figure out why
+      end
+
+      center_cubie.faces.find do |cubie_face|
+        has_point = cubie_face.points.find { |cubie_face_point| cubie_face_point == canonical_point }
+        matches_key = cubie_face.characteristic.key == characteristic.key
+        has_point && matches_key
+      end
     end
 
     def edge_cubies
